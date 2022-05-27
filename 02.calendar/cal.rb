@@ -6,14 +6,20 @@ today = Date.today
 
 if !options["m"]
   month = today.month
-else
+elsif options["m"].to_i >= 1 && options["m"].to_i <= 12
   month = options["m"].to_i
+else
+  puts "cal: #{options["m"]} is neither a month number (1..12) nor a name"
+  return
 end
 
 if !options["y"]
   year = today.year
-else
+elsif options["y"].to_i >= 1 && options["y"].to_i <= 9999
   year = options["y"].to_i
+else
+  puts "cal: year `#{options["y"]}' not in range 1..9999"
+  return
 end
 
 first_day = Date.new(year, month).wday # 月の初日の曜日
