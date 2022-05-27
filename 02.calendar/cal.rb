@@ -2,8 +2,20 @@ require 'date'
 require 'optparse'
 
 options = ARGV.getopts("m:", "y:")
-month = options["m"].to_i
-year = options["y"].to_i
+today = Date.today
+
+if !options["m"]
+  month = today.month
+else
+  month = options["m"].to_i
+end
+
+if !options["y"]
+  year = today.year
+else
+  year = options["y"].to_i
+end
+
 first_day = Date.new(year, month).wday # 月の初日の曜日
 last_date = Date.new(year, month, -1).day # 月の最終日の日
 space = "   " # 月の初日の位置を調整するための空白
