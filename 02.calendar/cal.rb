@@ -1,7 +1,9 @@
 require 'date'
+require 'optparse'
 
-year = 2022 # 年
-month = 5 # 月
+options = ARGV.getopts("m:", "y:")
+month = options["m"].to_i
+year = options["y"].to_i
 first_day = Date.new(year, month).wday # 月の初日の曜日
 last_date = Date.new(year, month, -1).day # 月の最終日の日
 space = "   " # 月の初日の位置を調整するための空白
