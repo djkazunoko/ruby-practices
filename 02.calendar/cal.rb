@@ -1,35 +1,31 @@
 require 'date'
 require 'optparse'
 
-options = ARGV.getopts("m:", "y:")
 today = Date.today
+options = ARGV.getopts("", "m:#{today.month}", "y:#{today.year}")
 
-if !options["m"]
-  month = today.month
-elsif options["m"].to_i >= 1 && options["m"].to_i <= 12
+if options["m"].to_i >= 1 && options["m"].to_i <= 12
   month = options["m"].to_i
 else
   puts "cal: #{options["m"]} is neither a month number (1..12) nor a name"
   return
 end
 
-if !options["y"]
-  year = today.year
-elsif options["y"].to_i >= 1 && options["y"].to_i <= 9999
+if options["y"].to_i >= 1 && options["y"].to_i <= 9999
   year = options["y"].to_i
 else
   puts "cal: year `#{options["y"]}' not in range 1..9999"
   return
 end
 
-first_day = Date.new(year, month).wday # 月の初日の曜日
-last_date = Date.new(year, month, -1).day # 月の最終日の日
-space = "   " # 月の初日の位置を調整するための空白
+first_date_day = Date.new(year, month).wday
+last_date = Date.new(year, month, -1).day
+space = "   "
 
 puts "      #{month}月 #{year}"
 puts "日 月 火 水 木 金 土"
 
-case first_day
+case first_date_day
 when 1
   print space
 when 2
