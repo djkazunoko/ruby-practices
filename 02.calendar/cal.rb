@@ -44,10 +44,19 @@ when 6
   print space * 6
 end
 
+def color_reverse(text)
+  "\e[30m\e[47m#{text}\e[0m"
+end
+
 Range.new(1,last_date).each do |date|
   day = Date.new(year, month, date).wday
   print " " if date <= 9
-  print "#{date} "
+  if date == today.day && month == today.month && year == today.year
+    print color_reverse(date)
+  else
+    print "#{date}"
+  end
+  print " "
   puts "" if day == 6
 end
 
