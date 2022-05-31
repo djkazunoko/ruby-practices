@@ -1,6 +1,4 @@
-nums = Range.new(1,20)
-
-nums.each do |num|
+(1..20).each do |num|
   if num % 15 == 0
     puts "FizzBuzz" 
   elsif num % 3 == 0
