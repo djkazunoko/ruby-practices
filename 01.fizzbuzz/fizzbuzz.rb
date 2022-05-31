@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 (1..20).each do |num|
   if num % 15 == 0
     puts "FizzBuzz" 
