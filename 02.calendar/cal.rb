@@ -27,20 +27,7 @@ space = "   "
 puts "      #{month}月 #{year}"
 puts "日 月 火 水 木 金 土"
 
-case first_date_day
-when 1
-  print space
-when 2
-  print space * 2
-when 3
-  print space * 3
-when 4
-  print space * 4
-when 5
-  print space * 5
-when 6
-  print space * 6
-end
+print space * first_date_day
 
 def color_reverse(text)
   "\e[30m\e[47m#{text}\e[0m"
