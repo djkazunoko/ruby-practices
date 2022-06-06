@@ -35,11 +35,10 @@ end
 
 (first_date..last_date).each do |full_date|
   day_of_week = full_date.wday
-  print " " if full_date.day <= 9
   if full_date == today
-    print color_reverse(full_date.day)
+    print color_reverse(full_date.day).rjust(16)
   else
-    print "#{full_date.day}"
+    print full_date.day.to_s.rjust(2)
   end
   print " "
   puts "" if day_of_week == 6
