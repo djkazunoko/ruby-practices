@@ -33,6 +33,5 @@ frames.each_with_index do |frame, i|
       frames_point[i] += frames[i + 1][0]
     end
   end
-  frames_point[i] += frames_point[i - 1] if i != 0
 end
-puts frames_point.last
+puts frames_point.sum
