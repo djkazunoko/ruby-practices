@@ -7,9 +7,8 @@ def display_files(max_number_of_columns)
   max_number_of_words = files.map(&:size).max
   number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
   number_of_rows.times do |i|
-    while i < number_of_elements
-      print files[i].ljust(max_number_of_words + 2)
-      i += number_of_rows
+    i.step(number_of_elements - 1, number_of_rows) do |n|
+      print files[n].ljust(max_number_of_words + 2)
     end
     print "\n"
   end
