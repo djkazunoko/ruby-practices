@@ -6,11 +6,7 @@ require 'optparse'
 params = ARGV.getopts('a')
 
 def display_files(params, max_number_of_columns)
-  files = if params['a']
-            Dir.glob('*', File::FNM_DOTMATCH, base: './')
-          else
-            files = Dir.glob('*', base: './')
-          end
+  files = get_files(params)
   number_of_elements = files.size
   max_number_of_words = files.map(&:size).max
   number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
@@ -19,6 +15,14 @@ def display_files(params, max_number_of_columns)
       print files[n].ljust(max_number_of_words + 2)
     end
     print "\n"
+  end
+end
+
+def get_files(params)
+  if params['a']
+    Dir.glob('*', File::FNM_DOTMATCH, base: './')
+  else
+    Dir.glob('*', base: './')
   end
 end
 
