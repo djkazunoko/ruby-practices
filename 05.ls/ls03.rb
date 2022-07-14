@@ -1,8 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def display_files(max_number_of_columns)
-  files = Dir.glob('*', base: './')
+require 'optparse'
+
+params = ARGV.getopts('r')
+
+def display_files(params, max_number_of_columns)
+  files = get_files(params)
   number_of_elements = files.size
   max_number_of_words = files.map(&:size).max
   number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
@@ -14,6 +18,14 @@ def display_files(max_number_of_columns)
   end
 end
 
+def get_files(params)
+  if params['r']
+    Dir.glob('*', base: './').reverse
+  else
+    Dir.glob('*', base: './')
+  end
+end
+
 def calc_number_of_rows(number_of_elements, max_number_of_columns)
   if (number_of_elements % max_number_of_columns).zero?
     number_of_elements / max_number_of_columns
@@ -22,4 +34,4 @@ def calc_number_of_rows(number_of_elements, max_number_of_columns)
   end
 end
 
-display_files(3)
+display_files(params, 3)
