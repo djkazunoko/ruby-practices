@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+MAX_NUMBER_OF_COLUMNS = 3
+
 def display_files(max_number_of_columns)
   files = Dir.glob('*', base: './')
   number_of_elements = files.size
@@ -22,4 +24,4 @@ def calc_number_of_rows(number_of_elements, max_number_of_columns)
   end
 end
 
-display_files(3)
+display_files(MAX_NUMBER_OF_COLUMNS)
