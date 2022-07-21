@@ -4,10 +4,9 @@
 require 'optparse'
 require 'etc'
 
-MAX_NUMBER_OF_COLUMNS = 3
 params = ARGV.getopts('l')
 
-def display_files(params, max_number_of_columns)
+def display_files(params)
   files = Dir.glob('*', base: './')
 
   if params['l']
@@ -25,6 +24,7 @@ def display_files(params, max_number_of_columns)
   else
     number_of_elements = files.size
     max_number_of_words = files.map(&:size).max
+    max_number_of_columns = 3
     number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
     number_of_rows.times do |i|
       i.step(number_of_elements - 1, number_of_rows) do |n|
@@ -43,4 +43,4 @@ def calc_number_of_rows(number_of_elements, max_number_of_columns)
   end
 end
 
-display_files(params, MAX_NUMBER_OF_COLUMNS)
+display_files(params)
