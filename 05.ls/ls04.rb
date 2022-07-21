@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'etc'
 
 MAX_NUMBER_OF_COLUMNS = 3
 params = ARGV.getopts('l')
@@ -11,7 +12,15 @@ def display_files(params, max_number_of_columns)
 
   if params['l']
     files.each do |file|
-      puts file
+      fs = File.stat(file)
+      file_mode = fs.mode
+      number_of_links = fs.nlink
+      owner_name = Etc.getpwuid(fs.uid).name
+      group_name = Etc.getgrgid(fs.gid).name
+      file_size = fs.size
+      last_modified_time = fs.mtime.strftime("%_m %_d %H:%M")
+      pathname = file
+      print "#{file_mode}  #{number_of_links} #{owner_name}  #{group_name}  #{file_size}  #{last_modified_time} #{pathname}\n"
     end
   else
     number_of_elements = files.size
