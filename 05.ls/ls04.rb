@@ -16,7 +16,7 @@ def display_files(params)
       number_of_links = fs.nlink
       owner_name = Etc.getpwuid(fs.uid).name
       group_name = Etc.getgrgid(fs.gid).name
-      file_size = fs.size
+      file_size = get_file_size(fs)
       last_modified_time = fs.mtime.strftime("%_m %_d %H:%M")
       pathname = file
       print "#{file_mode}  #{number_of_links} #{owner_name}  #{group_name}  #{file_size}  #{last_modified_time} #{pathname}\n"
@@ -99,6 +99,14 @@ def get_file_permissions_symbolic(file_mode_numeric)
   end
 
   file_permissions_symbolic.join
+end
+
+def get_file_size(fs)
+  if fs.rdev != 0
+    "#{fs.rdev_major}, #{fs.rdev_minor}"
+  else
+    fs.size
+  end
 end
 
 display_files(params)
