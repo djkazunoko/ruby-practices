@@ -17,7 +17,7 @@ def display_files(params)
       owner_name = Etc.getpwuid(fs.uid).name
       group_name = Etc.getgrgid(fs.gid).name
       file_size = get_file_size(fs)
-      last_modified_time = fs.mtime.strftime("%_m %_d %H:%M")
+      last_modified_time = get_last_modified_time(fs)
       pathname = file
       print "#{file_mode}  #{number_of_links} #{owner_name}  #{group_name}  #{file_size}  #{last_modified_time} #{pathname}\n"
     end
@@ -106,6 +106,14 @@ def get_file_size(fs)
     "#{fs.rdev_major}, #{fs.rdev_minor}"
   else
     fs.size
+  end
+end
+
+def get_last_modified_time(fs)
+  if Time.now - fs.mtime >= (60 * 60 * 24 * (365 / 2.0)) || Time.now - fs.mtime < 0
+    fs.mtime.strftime("%_m %_d %Y")
+  else
+    fs.mtime.strftime("%_m %_d %H:%M")
   end
 end
 
