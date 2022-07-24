@@ -17,14 +17,14 @@ def display_files(params)
     file_sizes = []
     blocks = []
     files.each do |file|
-      fs = File.lstat(file)
+      file_stat = File.lstat(file)
       long_format = {
-        file_mode: get_file_mode(fs),
-        number_of_links: fs.nlink.to_s,
-        owner_name: Etc.getpwuid(fs.uid).name,
-        group_name: Etc.getgrgid(fs.gid).name,
-        file_size: get_file_size(fs),
-        last_modified_time: get_last_modified_time(fs),
+        file_mode: get_file_mode(file_stat),
+        number_of_links: file_stat.nlink.to_s,
+        owner_name: Etc.getpwuid(file_stat.uid).name,
+        group_name: Etc.getgrgid(file_stat.gid).name,
+        file_size: get_file_size(file_stat),
+        last_modified_time: get_last_modified_time(file_stat),
         pathname: get_pathname(file)
       }
       long_formats << long_format
@@ -32,7 +32,7 @@ def display_files(params)
       owners << long_format[:owner_name]
       groups << long_format[:group_name]
       file_sizes << long_format[:file_size]
-      blocks << fs.blocks
+      blocks << file_stat.blocks
     end
     links_width = links.map(&:size).max
     owners_width = owners.map(&:size).max
@@ -64,9 +64,9 @@ def calc_number_of_rows(number_of_elements, max_number_of_columns)
   end
 end
 
-def get_file_mode(fs)
-  file_mode_numeric = fs.mode.to_s(8).rjust(6, '0')
-  file_type_symbolic = get_file_type_symbolic(fs.ftype)
+def get_file_mode(file_stat)
+  file_mode_numeric = file_stat.mode.to_s(8).rjust(6, '0')
+  file_type_symbolic = get_file_type_symbolic(file_stat.ftype)
   file_permissions_symbolic = get_file_permissions_symbolic(file_mode_numeric)
   file_mode_symbolic = "#{file_type_symbolic}#{file_permissions_symbolic}"
 end
@@ -122,19 +122,19 @@ def get_file_permissions_symbolic(file_mode_numeric)
   file_permissions_symbolic.join
 end
 
-def get_file_size(fs)
-  if fs.rdev != 0
-    "#{fs.rdev_major}, #{fs.rdev_minor}"
+def get_file_size(file_stat)
+  if file_stat.rdev != 0
+    "#{file_stat.rdev_major}, #{file_stat.rdev_minor}"
   else
-    fs.size.to_s
+    file_stat.size.to_s
   end
 end
 
-def get_last_modified_time(fs)
-  if Time.now - fs.mtime >= (60 * 60 * 24 * (365 / 2.0)) || Time.now - fs.mtime < 0
-    fs.mtime.strftime('%_m %_d  %Y')
+def get_last_modified_time(file_stat)
+  if Time.now - file_stat.mtime >= (60 * 60 * 24 * (365 / 2.0)) || (Time.now - file_stat.mtime).negative?
+    file_stat.mtime.strftime('%_m %_d  %Y')
   else
-    fs.mtime.strftime('%_m %_d %H:%M')
+    file_stat.mtime.strftime('%_m %_d %H:%M')
   end
 end
 
