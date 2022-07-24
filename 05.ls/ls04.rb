@@ -68,7 +68,7 @@ def get_file_mode(file_stat)
   file_mode_numeric = file_stat.mode.to_s(8).rjust(6, '0')
   file_type_symbolic = get_file_type_symbolic(file_stat.ftype)
   file_permissions_symbolic = get_file_permissions_symbolic(file_mode_numeric)
-  file_mode_symbolic = "#{file_type_symbolic}#{file_permissions_symbolic}"
+  "#{file_type_symbolic}#{file_permissions_symbolic}"
 end
 
 def get_file_type_symbolic(file_type)
