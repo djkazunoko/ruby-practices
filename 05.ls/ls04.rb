@@ -10,16 +10,34 @@ def display_files(params)
   files = Dir.glob('*', base: './')
 
   if params['l']
+    long_formats = []
+    links = []
+    owners = []
+    groups = []
+    file_sizes = []
     files.each do |file|
       fs = File.lstat(file)
-      file_mode = get_file_mode(fs)
-      number_of_links = fs.nlink
-      owner_name = Etc.getpwuid(fs.uid).name
-      group_name = Etc.getgrgid(fs.gid).name
-      file_size = get_file_size(fs)
-      last_modified_time = get_last_modified_time(fs)
-      pathname = get_pathname(file)
-      print "#{file_mode}  #{number_of_links} #{owner_name}  #{group_name}  #{file_size}  #{last_modified_time} #{pathname}\n"
+      long_format = {
+        file_mode: get_file_mode(fs),
+        number_of_links: fs.nlink.to_s,
+        owner_name: Etc.getpwuid(fs.uid).name,
+        group_name: Etc.getgrgid(fs.gid).name,
+        file_size: get_file_size(fs),
+        last_modified_time: get_last_modified_time(fs),
+        pathname: get_pathname(file)
+      }
+      long_formats << long_format
+      links << long_format[:number_of_links]
+      owners << long_format[:owner_name]
+      groups << long_format[:group_name]
+      file_sizes << long_format[:file_size]
+    end
+    links_width = links.map(&:size).max
+    owners_width = owners.map(&:size).max
+    groups_width = groups.map(&:size).max
+    file_sizes_width = file_sizes.map(&:size).max
+    long_formats.each do |c|
+      puts "#{c[:file_mode]} #{c[:number_of_links].rjust(links_width)} #{c[:owner_name].ljust(owners_width)}  #{c[:group_name].ljust(groups_width)}  #{c[:file_size].rjust(file_sizes_width)}  #{c[:last_modified_time]} #{c[:pathname]}"
     end
   else
     number_of_elements = files.size
@@ -105,13 +123,13 @@ def get_file_size(fs)
   if fs.rdev != 0
     "#{fs.rdev_major}, #{fs.rdev_minor}"
   else
-    fs.size
+    fs.size.to_s
   end
 end
 
 def get_last_modified_time(fs)
   if Time.now - fs.mtime >= (60 * 60 * 24 * (365 / 2.0)) || Time.now - fs.mtime < 0
-    fs.mtime.strftime("%_m %_d %Y")
+    fs.mtime.strftime("%_m %_d  %Y")
   else
     fs.mtime.strftime("%_m %_d %H:%M")
   end
