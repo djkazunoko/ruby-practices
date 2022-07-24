@@ -18,7 +18,7 @@ def display_files(params)
       group_name = Etc.getgrgid(fs.gid).name
       file_size = get_file_size(fs)
       last_modified_time = get_last_modified_time(fs)
-      pathname = file
+      pathname = get_pathname(file)
       print "#{file_mode}  #{number_of_links} #{owner_name}  #{group_name}  #{file_size}  #{last_modified_time} #{pathname}\n"
     end
   else
@@ -114,6 +114,14 @@ def get_last_modified_time(fs)
     fs.mtime.strftime("%_m %_d %Y")
   else
     fs.mtime.strftime("%_m %_d %H:%M")
+  end
+end
+
+def get_pathname(file)
+  if File.symlink?(file)
+    "#{file} -> #{File.readlink(file)}"
+  else
+    file
   end
 end
 
