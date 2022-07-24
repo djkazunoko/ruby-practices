@@ -101,23 +101,23 @@ def get_file_permissions_symbolic(file_mode_numeric)
 
   case file_mode_numeric.slice(2)
   when '1'
-    if file_permissions_symbolic[2].slice(2) == 'x'
-      file_permissions_symbolic[2] = file_permissions_symbolic[2].gsub(/.$/, 't')
-    else
-      file_permissions_symbolic[2] = file_permissions_symbolic[2].gsub(/.$/, 'T')
-    end
+    file_permissions_symbolic[2] = if file_permissions_symbolic[2].slice(2) == 'x'
+                                     file_permissions_symbolic[2].gsub(/.$/, 't')
+                                   else
+                                     file_permissions_symbolic[2].gsub(/.$/, 'T')
+                                   end
   when '2'
-    if file_permissions_symbolic[1].slice(2) == 'x'
-      file_permissions_symbolic[1] = file_permissions_symbolic[1].gsub(/.$/, 's')
-    else
-      file_permissions_symbolic[1] = file_permissions_symbolic[1].gsub(/.$/, 'S')
-    end
+    file_permissions_symbolic[1] = if file_permissions_symbolic[1].slice(2) == 'x'
+                                     file_permissions_symbolic[1].gsub(/.$/, 's')
+                                   else
+                                     file_permissions_symbolic[1].gsub(/.$/, 'S')
+                                   end
   when '4'
-    if file_permissions_symbolic[0].slice(2) == 'x'
-      file_permissions_symbolic[0] = file_permissions_symbolic[0].gsub(/.$/, 's')
-    else
-      file_permissions_symbolic[0] = file_permissions_symbolic[0].gsub(/.$/, 'S')
-    end
+    file_permissions_symbolic[0] = if file_permissions_symbolic[0].slice(2) == 'x'
+                                     file_permissions_symbolic[0].gsub(/.$/, 's')
+                                   else
+                                     file_permissions_symbolic[0].gsub(/.$/, 'S')
+                                   end
   end
 
   file_permissions_symbolic.join
