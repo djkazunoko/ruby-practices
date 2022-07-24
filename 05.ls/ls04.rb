@@ -71,7 +71,7 @@ def get_file_mode(file_stat)
   file_mode_symbolic = "#{file_type_symbolic}#{file_permissions_symbolic}"
 end
 
-def get_file_type_symbolic(name)
+def get_file_type_symbolic(file_type)
   {
     'fifo' => 'p',
     'characterSpecial' => 'c',
@@ -80,7 +80,7 @@ def get_file_type_symbolic(name)
     'file' => '-',
     'link' => 'l',
     'socket' => 's'
-  }[name]
+  }[file_type]
 end
 
 def get_file_permissions_symbolic(file_mode_numeric)
