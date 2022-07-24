@@ -15,6 +15,7 @@ def display_files(params)
     owners = []
     groups = []
     file_sizes = []
+    blocks = []
     files.each do |file|
       fs = File.lstat(file)
       long_format = {
@@ -31,11 +32,13 @@ def display_files(params)
       owners << long_format[:owner_name]
       groups << long_format[:group_name]
       file_sizes << long_format[:file_size]
+      blocks << fs.blocks
     end
     links_width = links.map(&:size).max
     owners_width = owners.map(&:size).max
     groups_width = groups.map(&:size).max
     file_sizes_width = file_sizes.map(&:size).max
+    puts "total #{blocks.sum}"
     long_formats.each do |c|
       puts "#{c[:file_mode]} #{c[:number_of_links].rjust(links_width)} #{c[:owner_name].ljust(owners_width)}  #{c[:group_name].ljust(groups_width)}  #{c[:file_size].rjust(file_sizes_width)} #{c[:last_modified_time]} #{c[:pathname]}"
     end
