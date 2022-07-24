@@ -37,7 +37,7 @@ def display_files(params)
     groups_width = groups.map(&:size).max
     file_sizes_width = file_sizes.map(&:size).max
     long_formats.each do |c|
-      puts "#{c[:file_mode]} #{c[:number_of_links].rjust(links_width)} #{c[:owner_name].ljust(owners_width)}  #{c[:group_name].ljust(groups_width)}  #{c[:file_size].rjust(file_sizes_width)}  #{c[:last_modified_time]} #{c[:pathname]}"
+      puts "#{c[:file_mode]} #{c[:number_of_links].rjust(links_width)} #{c[:owner_name].ljust(owners_width)}  #{c[:group_name].ljust(groups_width)}  #{c[:file_size].rjust(file_sizes_width)} #{c[:last_modified_time]} #{c[:pathname]}"
     end
   else
     number_of_elements = files.size
