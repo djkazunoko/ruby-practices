@@ -94,7 +94,7 @@ def get_file_permissions_symbolic(file_mode_numeric)
       '4' => 'r--',
       '5' => 'r-x',
       '6' => 'rw-',
-      '7' => 'rwx',
+      '7' => 'rwx'
     }[file_permission_numeric]
     file_permissions_symbolic << file_permission_symbolic
   end
