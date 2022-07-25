@@ -8,51 +8,23 @@ params = ARGV.getopts('l')
 
 def display_files(params)
   files = Dir.glob('*', base: './')
-
   if params['l']
-    long_formats = []
-    links = []
-    owners = []
-    groups = []
-    file_sizes = []
-    blocks = []
-    files.each do |file|
-      file_stat = File.lstat(file)
-      long_format = {
-        file_mode: get_file_mode(file_stat),
-        number_of_links: file_stat.nlink.to_s,
-        owner_name: Etc.getpwuid(file_stat.uid).name,
-        group_name: Etc.getgrgid(file_stat.gid).name,
-        file_size: get_file_size(file_stat),
-        last_modified_time: get_last_modified_time(file_stat),
-        pathname: get_pathname(file)
-      }
-      long_formats << long_format
-      links << long_format[:number_of_links]
-      owners << long_format[:owner_name]
-      groups << long_format[:group_name]
-      file_sizes << long_format[:file_size]
-      blocks << file_stat.blocks
-    end
-    links_width = links.map(&:size).max
-    owners_width = owners.map(&:size).max
-    groups_width = groups.map(&:size).max
-    file_sizes_width = file_sizes.map(&:size).max
-    puts "total #{blocks.sum}"
-    long_formats.each do |c|
-      puts "#{c[:file_mode]} #{c[:number_of_links].rjust(links_width)} #{c[:owner_name].ljust(owners_width)}  #{c[:group_name].ljust(groups_width)}  #{c[:file_size].rjust(file_sizes_width)} #{c[:last_modified_time]} #{c[:pathname]}"
-    end
+    display_long_format(files)
   else
-    number_of_elements = files.size
-    max_number_of_words = files.map(&:size).max
-    max_number_of_columns = 3
-    number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
-    number_of_rows.times do |i|
-      i.step(number_of_elements - 1, number_of_rows) do |n|
-        print files[n].ljust(max_number_of_words + 2)
-      end
-      print "\n"
+    display_sort_by_column(files)
+  end
+end
+
+def display_sort_by_column(files)
+  number_of_elements = files.size
+  max_number_of_words = files.map(&:size).max
+  max_number_of_columns = 3
+  number_of_rows = calc_number_of_rows(number_of_elements, max_number_of_columns)
+  number_of_rows.times do |i|
+    i.step(number_of_elements - 1, number_of_rows) do |n|
+      print files[n].ljust(max_number_of_words + 2)
     end
+    print "\n"
   end
 end
 
@@ -62,6 +34,68 @@ def calc_number_of_rows(number_of_elements, max_number_of_columns)
   else
     (number_of_elements / max_number_of_columns) + 1
   end
+end
+
+def display_long_format(files)
+  long_formats = get_long_formats(files)
+  max_widths = get_max_widths(long_formats)
+  number_of_blocks = get_number_of_blocks(long_formats)
+  puts "total #{number_of_blocks}"
+  long_formats.each do |long_format|
+    print "#{long_format[:file_mode]} "
+    print "#{long_format[:number_of_links].rjust(max_widths[:link])} "
+    print "#{long_format[:owner_name].ljust(max_widths[:owner])}  "
+    print "#{long_format[:group_name].ljust(max_widths[:group])}  "
+    print "#{long_format[:file_size].rjust(max_widths[:file_size])} "
+    print "#{long_format[:last_modified_time]} "
+    print "#{long_format[:pathname]}\n"
+  end
+end
+
+def get_long_formats(files)
+  long_formats = []
+  files.each do |file|
+    file_stat = File.lstat(file)
+    long_format = {
+      file_mode: get_file_mode(file_stat),
+      number_of_links: file_stat.nlink.to_s,
+      owner_name: Etc.getpwuid(file_stat.uid).name,
+      group_name: Etc.getgrgid(file_stat.gid).name,
+      file_size: get_file_size(file_stat),
+      last_modified_time: get_last_modified_time(file_stat),
+      pathname: get_pathname(file),
+      blocks: file_stat.blocks
+    }
+    long_formats << long_format
+  end
+  long_formats
+end
+
+def get_max_widths(long_formats)
+  links = []
+  owners = []
+  groups = []
+  file_sizes = []
+  long_formats.each do |long_format|
+    links << long_format[:number_of_links]
+    owners << long_format[:owner_name]
+    groups << long_format[:group_name]
+    file_sizes << long_format[:file_size]
+  end
+  {
+    link: links.map(&:size).max,
+    owner: owners.map(&:size).max,
+    group: groups.map(&:size).max,
+    file_size: file_sizes.map(&:size).max
+  }
+end
+
+def get_number_of_blocks(long_formats)
+  blocks = []
+  long_formats.each do |long_format|
+    blocks << long_format[:blocks]
+  end
+  blocks.sum
 end
 
 def get_file_mode(file_stat)
