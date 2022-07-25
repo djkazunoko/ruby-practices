@@ -98,7 +98,11 @@ def get_file_permissions_symbolic(file_mode_numeric)
     }[file_permission_numeric]
     file_permissions_symbolic << file_permission_symbolic
   end
+  get_special_permissions(file_mode_numeric, file_permissions_symbolic)
+  file_permissions_symbolic.join
+end
 
+def get_special_permissions(file_mode_numeric, file_permissions_symbolic)
   case file_mode_numeric.slice(2)
   when '1'
     file_permissions_symbolic[2] = if file_permissions_symbolic[2].slice(2) == 'x'
@@ -119,8 +123,6 @@ def get_file_permissions_symbolic(file_mode_numeric)
                                      file_permissions_symbolic[0].gsub(/.$/, 'S')
                                    end
   end
-
-  file_permissions_symbolic.join
 end
 
 def get_file_size(file_stat)
