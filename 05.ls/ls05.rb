@@ -4,15 +4,25 @@
 require 'optparse'
 require 'etc'
 
-params = ARGV.getopts('l')
+params = ARGV.getopts('alr')
 
 def display_files(params)
-  files = Dir.glob('*', base: './')
+  files = get_files(params)
   if params['l']
     display_long_format(files)
   else
     display_sort_by_column(files)
   end
+end
+
+def get_files(params)
+  files = if params['a']
+            Dir.glob('*', File::FNM_DOTMATCH, base: './')
+          else
+            Dir.glob('*', base: './')
+          end
+  files = files.reverse if params['r']
+  files
 end
 
 def display_sort_by_column(files)
