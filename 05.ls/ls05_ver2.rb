@@ -24,25 +24,13 @@ def exec
   list_paths(paths, long_format: params['l'], reverse: params['r'])
 end
 
-def list_paths(paths, long_format: false, reverse: false)
-  paths = paths.reverse if reverse
-  long_format ? list_long(paths) : list_short(paths)
-end
-
 def get_paths(dotmatch: false)
   dotmatch ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
 end
 
-def list_short(paths)
-  element_number = paths.size.to_f
-  max_length = paths.map(&:size).max
-  row_number = (element_number / COLUMN_NUMBER).ceil
-  lines = Array.new(row_number) { [] }
-  paths.each_with_index do |path, index|
-    line_number = index % row_number
-    lines[line_number].push(path.ljust(max_length + 2))
-  end
-  lines.each { |line| puts line.join }
+def list_paths(paths, long_format: false, reverse: false)
+  paths = paths.reverse if reverse
+  long_format ? list_long(paths) : list_short(paths)
 end
 
 def list_long(paths)
@@ -74,15 +62,6 @@ def get_long_format(path)
     mtime: get_mtime(path_stat),
     pathname: get_pathname(path),
     blocks: path_stat.blocks
-  }
-end
-
-def get_max_length_map(long_formats)
-  {
-    nlink: long_formats.map { |long_format| long_format[:nlink].size }.max,
-    username: long_formats.map { |long_format| long_format[:username].size }.max,
-    groupname: long_formats.map { |long_format| long_format[:groupname].size }.max,
-    bitesize: long_formats.map { |long_format| long_format[:bitesize].size }.max
   }
 end
 
@@ -151,6 +130,27 @@ def get_pathname(path)
   else
     path
   end
+end
+
+def get_max_length_map(long_formats)
+  {
+    nlink: long_formats.map { |long_format| long_format[:nlink].size }.max,
+    username: long_formats.map { |long_format| long_format[:username].size }.max,
+    groupname: long_formats.map { |long_format| long_format[:groupname].size }.max,
+    bitesize: long_formats.map { |long_format| long_format[:bitesize].size }.max
+  }
+end
+
+def list_short(paths)
+  element_number = paths.size.to_f
+  max_length = paths.map(&:size).max
+  row_number = (element_number / COLUMN_NUMBER).ceil
+  lines = Array.new(row_number) { [] }
+  paths.each_with_index do |path, index|
+    line_number = index % row_number
+    lines[line_number].push(path.ljust(max_length + 2))
+  end
+  lines.each { |line| puts line.join }
 end
 
 exec
