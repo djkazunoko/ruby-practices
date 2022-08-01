@@ -6,6 +6,17 @@ require 'etc'
 
 COLUMN_NUMBER = 3
 
+MODE_MAP = {
+  '0' => '---',
+  '1' => '--x',
+  '2' => '-w-',
+  '3' => '-wx',
+  '4' => 'r--',
+  '5' => 'r-x',
+  '6' => 'rw-',
+  '7' => 'rwx'
+}.freeze
+
 def exec
   params = ARGV.getopts('alr')
 
@@ -40,7 +51,7 @@ def display_long_format(files)
   number_of_blocks = long_formats.map { |long_format| long_format[:blocks] }.sum
   puts "total #{number_of_blocks}"
   long_formats.each do |long_format|
-    print "#{long_format[:file_mode]} "
+    print "#{long_format[:type]}#{long_format[:mode]} "
     print "#{long_format[:number_of_links].rjust(max_widths[:link])} "
     print "#{long_format[:owner_name].ljust(max_widths[:owner])}  "
     print "#{long_format[:group_name].ljust(max_widths[:group])}  "
@@ -53,7 +64,8 @@ end
 def get_long_format(file)
   file_stat = File.lstat(file)
   {
-    file_mode: get_file_mode(file_stat),
+    type: format_type(file_stat.ftype),
+    mode: format_mode(file_stat.mode),
     number_of_links: file_stat.nlink.to_s,
     owner_name: Etc.getpwuid(file_stat.uid).name,
     group_name: Etc.getgrgid(file_stat.gid).name,
@@ -83,14 +95,7 @@ def get_max_widths(long_formats)
   }
 end
 
-def get_file_mode(file_stat)
-  file_mode_numeric = file_stat.mode.to_s(8).rjust(6, '0')
-  file_type_symbolic = get_file_type_symbolic(file_stat.ftype)
-  file_permissions_symbolic = get_file_permissions_symbolic(file_mode_numeric)
-  "#{file_type_symbolic}#{file_permissions_symbolic}"
-end
-
-def get_file_type_symbolic(file_type)
+def format_type(type)
   {
     'fifo' => 'p',
     'characterSpecial' => 'c',
@@ -99,49 +104,38 @@ def get_file_type_symbolic(file_type)
     'file' => '-',
     'link' => 'l',
     'socket' => 's'
-  }[file_type]
+  }[type]
 end
 
-def get_file_permissions_symbolic(file_mode_numeric)
-  file_permissions_symbolic = []
-  file_mode_numeric.slice(3, 3).each_char do |file_permission_numeric|
-    file_permission_symbolic = {
-      '0' => '---',
-      '1' => '--x',
-      '2' => '-w-',
-      '3' => '-wx',
-      '4' => 'r--',
-      '5' => 'r-x',
-      '6' => 'rw-',
-      '7' => 'rwx'
-    }[file_permission_numeric]
-    file_permissions_symbolic << file_permission_symbolic
-  end
-  get_special_permissions(file_mode_numeric, file_permissions_symbolic)
-  file_permissions_symbolic.join
+def format_mode(mode)
+  mode_octal = mode.to_s(8)
+  permissions_numeric = mode_octal.slice(-3..-1).split(//)
+  permissions_symbolic = permissions_numeric.map { |n| MODE_MAP[n] }
+  add_special_permissions(mode_octal, permissions_symbolic).join
 end
 
-def get_special_permissions(file_mode_numeric, file_permissions_symbolic)
-  case file_mode_numeric.slice(2)
+def add_special_permissions(mode_octal, permissions_symbolic)
+  case mode_octal.slice(-4)
   when '1'
-    file_permissions_symbolic[2] = if file_permissions_symbolic[2].slice(2) == 'x'
-                                     file_permissions_symbolic[2].gsub(/.$/, 't')
+    permissions_symbolic[2] = if permissions_symbolic[2].slice(2) == 'x'
+                                     permissions_symbolic[2].gsub(/.$/, 't')
                                    else
-                                     file_permissions_symbolic[2].gsub(/.$/, 'T')
+                                     permissions_symbolic[2].gsub(/.$/, 'T')
                                    end
   when '2'
-    file_permissions_symbolic[1] = if file_permissions_symbolic[1].slice(2) == 'x'
-                                     file_permissions_symbolic[1].gsub(/.$/, 's')
+    permissions_symbolic[1] = if permissions_symbolic[1].slice(2) == 'x'
+                                     permissions_symbolic[1].gsub(/.$/, 's')
                                    else
-                                     file_permissions_symbolic[1].gsub(/.$/, 'S')
+                                     permissions_symbolic[1].gsub(/.$/, 'S')
                                    end
   when '4'
-    file_permissions_symbolic[0] = if file_permissions_symbolic[0].slice(2) == 'x'
-                                     file_permissions_symbolic[0].gsub(/.$/, 's')
+    permissions_symbolic[0] = if permissions_symbolic[0].slice(2) == 'x'
+                                     permissions_symbolic[0].gsub(/.$/, 's')
                                    else
-                                     file_permissions_symbolic[0].gsub(/.$/, 'S')
+                                     permissions_symbolic[0].gsub(/.$/, 'S')
                                    end
   end
+  permissions_symbolic
 end
 
 def get_file_size(file_stat)
