@@ -35,7 +35,7 @@ def display_sort_by_column(files)
 end
 
 def display_long_format(files)
-  long_formats = get_long_formats(files)
+  long_formats = files.map { |file| get_long_format(file) }
   max_widths = get_max_widths(long_formats)
   number_of_blocks = get_number_of_blocks(long_formats)
   puts "total #{number_of_blocks}"
@@ -50,23 +50,18 @@ def display_long_format(files)
   end
 end
 
-def get_long_formats(files)
-  long_formats = []
-  files.each do |file|
-    file_stat = File.lstat(file)
-    long_format = {
-      file_mode: get_file_mode(file_stat),
-      number_of_links: file_stat.nlink.to_s,
-      owner_name: Etc.getpwuid(file_stat.uid).name,
-      group_name: Etc.getgrgid(file_stat.gid).name,
-      file_size: get_file_size(file_stat),
-      last_modified_time: get_last_modified_time(file_stat),
-      pathname: get_pathname(file),
-      blocks: file_stat.blocks
-    }
-    long_formats << long_format
-  end
-  long_formats
+def get_long_format(file)
+  file_stat = File.lstat(file)
+  {
+    file_mode: get_file_mode(file_stat),
+    number_of_links: file_stat.nlink.to_s,
+    owner_name: Etc.getpwuid(file_stat.uid).name,
+    group_name: Etc.getgrgid(file_stat.gid).name,
+    file_size: get_file_size(file_stat),
+    last_modified_time: get_last_modified_time(file_stat),
+    pathname: get_pathname(file),
+    blocks: file_stat.blocks
+  }
 end
 
 def get_max_widths(long_formats)
