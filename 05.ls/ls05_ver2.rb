@@ -28,15 +28,15 @@ def get_files(params)
 end
 
 def display_sort_by_column(files)
-  number_of_elements = files.size.to_f
-  max_number_of_words = files.map(&:size).max
-  number_of_rows = (number_of_elements / COLUMN_NUMBER).ceil
-  number_of_rows.times do |i|
-    i.step(number_of_elements - 1, number_of_rows) do |n|
-      print files[n].ljust(max_number_of_words + 2)
-    end
-    print "\n"
+  element_number = files.size.to_f
+  max_length = files.map(&:size).max
+  row_number = (element_number / COLUMN_NUMBER).ceil
+  lines = Array.new(row_number) { [] }
+  files.each_with_index do |file, index|
+    line_number = index % row_number
+    lines[line_number].push(file.ljust(max_length + 2))
   end
+  lines.each { |line| puts line.join }
 end
 
 def display_long_format(files)
