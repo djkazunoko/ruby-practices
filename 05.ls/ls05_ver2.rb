@@ -47,15 +47,15 @@ end
 
 def display_long_format(files)
   long_formats = files.map { |file| get_long_format(file) }
-  max_widths = get_max_widths(long_formats)
+  max_length_map = get_max_length_map(long_formats)
   number_of_blocks = long_formats.map { |long_format| long_format[:blocks] }.sum
   puts "total #{number_of_blocks}"
   long_formats.each do |long_format|
     print "#{long_format[:type]}#{long_format[:mode]} "
-    print "#{long_format[:number_of_links].rjust(max_widths[:link])} "
-    print "#{long_format[:owner_name].ljust(max_widths[:owner])}  "
-    print "#{long_format[:group_name].ljust(max_widths[:group])}  "
-    print "#{long_format[:file_size].rjust(max_widths[:file_size])} "
+    print "#{long_format[:number_of_links].rjust(max_length_map[:link])} "
+    print "#{long_format[:owner_name].ljust(max_length_map[:owner])}  "
+    print "#{long_format[:group_name].ljust(max_length_map[:group])}  "
+    print "#{long_format[:file_size].rjust(max_length_map[:file_size])} "
     print "#{long_format[:last_modified_time]} "
     print "#{long_format[:pathname]}\n"
   end
@@ -76,22 +76,12 @@ def get_long_format(file)
   }
 end
 
-def get_max_widths(long_formats)
-  links = []
-  owners = []
-  groups = []
-  file_sizes = []
-  long_formats.each do |long_format|
-    links << long_format[:number_of_links]
-    owners << long_format[:owner_name]
-    groups << long_format[:group_name]
-    file_sizes << long_format[:file_size]
-  end
+def get_max_length_map(long_formats)
   {
-    link: links.map(&:size).max,
-    owner: owners.map(&:size).max,
-    group: groups.map(&:size).max,
-    file_size: file_sizes.map(&:size).max
+    link: long_formats.map { |long_format| long_format[:number_of_links].size }.max,
+    owner: long_formats.map { |long_format| long_format[:owner_name].size }.max,
+    group: long_formats.map { |long_format| long_format[:group_name].size }.max,
+    file_size: long_formats.map { |long_format| long_format[:file_size].size }.max
   }
 end
 
