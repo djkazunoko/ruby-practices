@@ -6,25 +6,20 @@ require 'etc'
 
 COLUMN_NUMBER = 3
 
-params = ARGV.getopts('alr')
+def exec
+  params = ARGV.getopts('alr')
 
-def display_files(params)
-  files = get_files(params)
-  if params['l']
-    display_long_format(files)
-  else
-    display_sort_by_column(files)
-  end
+  files = get_files(dotmatch: params['a'])
+  display_files(files, long_format: params['l'], reverse: params['r'])
 end
 
-def get_files(params)
-  files = if params['a']
-            Dir.glob('*', File::FNM_DOTMATCH, base: './')
-          else
-            Dir.glob('*', base: './')
-          end
-  files = files.reverse if params['r']
-  files
+def display_files(files, long_format: false, reverse: false)
+  files = files.reverse if reverse
+  long_format ? display_long_format(files) : display_sort_by_column(files)
+end
+
+def get_files(dotmatch: false)
+  dotmatch ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
 end
 
 def display_sort_by_column(files)
@@ -186,4 +181,4 @@ def get_pathname(file)
   end
 end
 
-display_files(params)
+exec
