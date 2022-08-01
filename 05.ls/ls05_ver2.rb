@@ -37,7 +37,7 @@ end
 def display_long_format(files)
   long_formats = files.map { |file| get_long_format(file) }
   max_widths = get_max_widths(long_formats)
-  number_of_blocks = get_number_of_blocks(long_formats)
+  number_of_blocks = long_formats.map { |long_format| long_format[:blocks] }.sum
   puts "total #{number_of_blocks}"
   long_formats.each do |long_format|
     print "#{long_format[:file_mode]} "
@@ -81,14 +81,6 @@ def get_max_widths(long_formats)
     group: groups.map(&:size).max,
     file_size: file_sizes.map(&:size).max
   }
-end
-
-def get_number_of_blocks(long_formats)
-  blocks = []
-  long_formats.each do |long_format|
-    blocks << long_format[:blocks]
-  end
-  blocks.sum
 end
 
 def get_file_mode(file_stat)
