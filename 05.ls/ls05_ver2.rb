@@ -52,11 +52,11 @@ def display_long_format(files)
   puts "total #{number_of_blocks}"
   long_formats.each do |long_format|
     print "#{long_format[:type]}#{long_format[:mode]} "
-    print "#{long_format[:number_of_links].rjust(max_length_map[:link])} "
-    print "#{long_format[:owner_name].ljust(max_length_map[:owner])}  "
-    print "#{long_format[:group_name].ljust(max_length_map[:group])}  "
-    print "#{long_format[:file_size].rjust(max_length_map[:file_size])} "
-    print "#{long_format[:last_modified_time]} "
+    print "#{long_format[:nlink].rjust(max_length_map[:link])} "
+    print "#{long_format[:username].ljust(max_length_map[:owner])}  "
+    print "#{long_format[:groupname].ljust(max_length_map[:group])}  "
+    print "#{long_format[:filesize].rjust(max_length_map[:filesize])} "
+    print "#{long_format[:mtime]} "
     print "#{long_format[:pathname]}\n"
   end
 end
@@ -66,11 +66,11 @@ def get_long_format(file)
   {
     type: format_type(file_stat.ftype),
     mode: format_mode(file_stat.mode),
-    number_of_links: file_stat.nlink.to_s,
-    owner_name: Etc.getpwuid(file_stat.uid).name,
-    group_name: Etc.getgrgid(file_stat.gid).name,
-    file_size: get_file_size(file_stat),
-    last_modified_time: get_last_modified_time(file_stat),
+    nlink: file_stat.nlink.to_s,
+    username: Etc.getpwuid(file_stat.uid).name,
+    groupname: Etc.getgrgid(file_stat.gid).name,
+    filesize: get_filesize(file_stat),
+    mtime: get_mtime(file_stat),
     pathname: get_pathname(file),
     blocks: file_stat.blocks
   }
@@ -78,10 +78,10 @@ end
 
 def get_max_length_map(long_formats)
   {
-    link: long_formats.map { |long_format| long_format[:number_of_links].size }.max,
-    owner: long_formats.map { |long_format| long_format[:owner_name].size }.max,
-    group: long_formats.map { |long_format| long_format[:group_name].size }.max,
-    file_size: long_formats.map { |long_format| long_format[:file_size].size }.max
+    link: long_formats.map { |long_format| long_format[:nlink].size }.max,
+    owner: long_formats.map { |long_format| long_format[:username].size }.max,
+    group: long_formats.map { |long_format| long_format[:groupname].size }.max,
+    filesize: long_formats.map { |long_format| long_format[:filesize].size }.max
   }
 end
 
@@ -128,7 +128,7 @@ def add_special_permissions(mode_octal, permissions_symbolic)
   permissions_symbolic
 end
 
-def get_file_size(file_stat)
+def get_filesize(file_stat)
   if file_stat.rdev != 0
     "#{file_stat.rdev_major}, #{file_stat.rdev_minor}"
   else
@@ -136,7 +136,7 @@ def get_file_size(file_stat)
   end
 end
 
-def get_last_modified_time(file_stat)
+def get_mtime(file_stat)
   if Time.now - file_stat.mtime >= (60 * 60 * 24 * (365 / 2.0)) || (Time.now - file_stat.mtime).negative?
     file_stat.mtime.strftime('%_m %_d  %Y')
   else
