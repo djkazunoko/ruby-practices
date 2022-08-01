@@ -39,15 +39,7 @@ def list_long(paths)
   block_total = long_formats.map { |long_format| long_format[:blocks] }.sum
 
   puts "total #{block_total}"
-  long_formats.each do |long_format|
-    print "#{long_format[:type]}#{long_format[:mode]} "
-    print "#{long_format[:nlink].rjust(max_length_map[:nlink])} "
-    print "#{long_format[:username].ljust(max_length_map[:username])}  "
-    print "#{long_format[:groupname].ljust(max_length_map[:groupname])}  "
-    print "#{long_format[:bitesize].rjust(max_length_map[:bitesize])} "
-    print "#{long_format[:mtime]} "
-    print "#{long_format[:pathname]}\n"
-  end
+  long_formats.each { |long_format| print_long_format(long_format, max_length_map) }
 end
 
 def get_long_format(path)
@@ -139,6 +131,18 @@ def get_max_length_map(long_formats)
     groupname: long_formats.map { |long_format| long_format[:groupname].size }.max,
     bitesize: long_formats.map { |long_format| long_format[:bitesize].size }.max
   }
+end
+
+def print_long_format(long_format, max_length_map)
+  print [
+    "#{long_format[:type]}#{long_format[:mode]} ",
+    "#{long_format[:nlink].rjust(max_length_map[:nlink])} ",
+    "#{long_format[:username].ljust(max_length_map[:username])}  ",
+    "#{long_format[:groupname].ljust(max_length_map[:groupname])}  ",
+    "#{long_format[:bitesize].rjust(max_length_map[:bitesize])} ",
+    "#{long_format[:mtime]} ",
+    "#{long_format[:pathname]}\n"
+  ].join
 end
 
 def list_short(paths)
