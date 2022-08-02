@@ -102,7 +102,7 @@ end
 
 def get_bitesize(path_stat)
   if path_stat.rdev != 0
-    "#{path_stat.rdev_major}, #{path_stat.rdev_minor}"
+    "0x#{path_stat.rdev.to_s(16)}"
   else
     path_stat.size.to_s
   end
