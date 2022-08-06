@@ -5,7 +5,8 @@ require 'optparse'
 
 def exec
   params = option_parse
-  word_count(ARGV)
+  count_file(ARGV)
+  count_total(ARGV) if ARGV.size >= 2
 end
 
 def option_parse
@@ -18,38 +19,47 @@ def option_parse
   params
 end
 
-def word_count(argv)
-  display_word_count(argv)
-  display_total_count(argv) if argv.size >= 2
+def count_file(argv)
+  counts = argv.map { |file| build_counts(file) }
+  counts.each { |count| print_count(count) }
 end
 
-def display_word_count(argv)
-  argv.each do |file|
-    row_count = get_row_count(file).to_s
-    word_count = get_word_count(file).to_s
-    filesize = File.size(file).to_s
-    puts " #{row_count.rjust(7)} #{word_count.rjust(7)} #{filesize.rjust(7)} #{file}"
-  end
+def build_counts(file)
+  {
+    line: line_counts(file).to_s,
+    word: word_counts(file).to_s,
+    byte: File.size(file).to_s,
+    path: file
+  }
 end
 
-def get_row_count(file)
+def line_counts(file)
   File.open(file) { |f| f.readlines.size }
 end
 
-def get_word_count(file)
+def word_counts(file)
   File.open(file) { |f| f.each.map { |line| line.split(/[ \t\n]+/).size}.sum }
 end
 
-def display_total_count(argv)
-  total_map = get_total_map(argv)
-  puts " #{total_map[:row_count].rjust(7)} #{total_map[:word_count].rjust(7)} #{total_map[:filesize].rjust(7)} total"
+def print_count(count)
+  print [
+    " #{count[:line].rjust(7)}",
+    " #{count[:word].rjust(7)}",
+    " #{count[:byte].rjust(7)}",
+    " #{count[:path]}\n"
+  ].join
 end
 
-def get_total_map(argv)
+def count_total(argv)
+  total_counts = build_total_counts(argv)
+  puts " #{total_counts[:line].rjust(7)} #{total_counts[:word].rjust(7)} #{total_counts[:byte].rjust(7)} total"
+end
+
+def build_total_counts(argv)
   {
-    row_count: argv.map { |file| get_row_count(file) }.sum.to_s,
-    word_count: argv.map { |file| get_word_count(file) }.sum.to_s,
-    filesize: argv.map { |file| File.size(file) }.sum.to_s
+    line: argv.map { |file| line_counts(file) }.sum.to_s,
+    word: argv.map { |file| word_counts(file) }.sum.to_s,
+    byte: argv.map { |file| File.size(file) }.sum.to_s
   }
 end
 
