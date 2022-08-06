@@ -52,7 +52,7 @@ end
 
 def count_total(argv)
   total_counts = build_total_counts(argv)
-  puts " #{total_counts[:line].rjust(7)} #{total_counts[:word].rjust(7)} #{total_counts[:byte].rjust(7)} total"
+  print_total_counts(total_counts)
 end
 
 def build_total_counts(argv)
@@ -61,6 +61,15 @@ def build_total_counts(argv)
     word: argv.map { |file| word_counts(file) }.sum.to_s,
     byte: argv.map { |file| File.size(file) }.sum.to_s
   }
+end
+
+def print_total_counts(total_counts)
+  print [
+    " #{total_counts[:line].rjust(7)}",
+    " #{total_counts[:word].rjust(7)}",
+    " #{total_counts[:byte].rjust(7)}",
+    " total\n"
+  ].join
 end
 
 exec
