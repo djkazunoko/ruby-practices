@@ -1,12 +1,22 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 def exec
-  if ARGV.empty?
-    word_count_stdin
-  else
-    word_count_files
-  end
+  params = option_parse
+  params = {c: true, l: true, w: true} if params.empty?
+  ARGV.empty? ? word_count_stdin : word_count_files
+end
+
+def option_parse
+  opt = OptionParser.new
+  params = {}
+  opt.on('-c')
+  opt.on('-l')
+  opt.on('-w')
+  opt.parse!(ARGV, into: params)
+  params
 end
 
 def word_count_stdin
