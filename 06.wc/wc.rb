@@ -5,7 +5,7 @@ require 'optparse'
 
 def exec
   params = option_parse
-  params = {c: true, l: true, w: true} if params.empty?
+  params = { c: true, l: true, w: true } if params.empty?
   ARGV.empty? ? wc_stdin(params) : wc_files(params)
 end
 
@@ -42,7 +42,7 @@ def count_word_number(array_of_lines)
 end
 
 def count_bytesize(array_of_lines)
-  array_of_lines.map { |line| line.bytesize }.sum
+  array_of_lines.map(&:bytesize).sum
 end
 
 def format_counts_map(counts_map, params)
