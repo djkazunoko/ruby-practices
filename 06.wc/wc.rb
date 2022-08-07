@@ -6,7 +6,7 @@ require 'optparse'
 def exec
   params = option_parse
   params = {c: true, l: true, w: true} if params.empty?
-  ARGV.empty? ? word_count_stdin : word_count_files
+  ARGV.empty? ? word_count_stdin(params) : word_count_files
 end
 
 def option_parse
@@ -19,10 +19,10 @@ def option_parse
   params
 end
 
-def word_count_stdin
+def word_count_stdin(params)
   array_of_line = $stdin.readlines
   counts_map = build_counts_map(array_of_line)
-  puts format_counts_map(counts_map).join
+  puts format_counts_map(counts_map, params).join
 end
 
 def build_counts_map(array_of_line)
@@ -45,12 +45,12 @@ def count_bytesize(array_of_line)
   array_of_line.map { |line| line.bytesize }.sum
 end
 
-def format_counts_map(counts_map)
-  [
-    " #{counts_map[:line].to_s.rjust(7)}",
-    " #{counts_map[:word].to_s.rjust(7)}",
-    " #{counts_map[:byte].to_s.rjust(7)}"
-  ]
+def format_counts_map(counts_map, params)
+  formatted_data = []
+  formatted_data << " #{counts_map[:line].to_s.rjust(7)}" if params[:l]
+  formatted_data << " #{counts_map[:word].to_s.rjust(7)}" if params[:w]
+  formatted_data << " #{counts_map[:byte].to_s.rjust(7)}" if params[:c]
+  formatted_data
 end
 
 def word_count_files
