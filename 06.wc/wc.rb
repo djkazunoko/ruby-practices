@@ -63,7 +63,8 @@ def wc_files(params)
 end
 
 def files_to_arrays_of_lines
-  ARGV.map { |path| File.open(path) { |f| f.readlines } }
+  # ARGV.map { |path| File.open(path) { |f| f.readlines } }
+  ARGV.map { |path| File.open(path).call(&:readlines) }
 end
 
 def format_counts_map_with_path(counts_map, idx, params)
