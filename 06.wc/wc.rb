@@ -20,29 +20,29 @@ def parse_options
 end
 
 def wc_stdin(options)
-  lines = $stdin.readlines
-  counts_map = build_counts_map(lines)
+  file = $stdin.readlines
+  counts_map = build_counts_map(file)
   puts format_counts_map(counts_map, options).join
 end
 
-def build_counts_map(lines)
+def build_counts_map(file)
   {
-    line: count_line_number(lines),
-    word: count_word_number(lines),
-    byte: count_bytesize(lines)
+    line: count_line_number(file),
+    word: count_word_number(file),
+    byte: count_bytesize(file)
   }
 end
 
-def count_line_number(lines)
-  lines.size
+def count_line_number(file)
+  file.size
 end
 
-def count_word_number(lines)
-  lines.map { |line| line.split(/[ \t\n]+/).size }.sum
+def count_word_number(file)
+  file.map { |line| line.split(/[ \t\n]+/).size }.sum
 end
 
-def count_bytesize(lines)
-  lines.map(&:bytesize).sum
+def count_bytesize(file)
+  file.map(&:bytesize).sum
 end
 
 def format_counts_map(counts_map, options)
@@ -54,16 +54,12 @@ def format_counts_map(counts_map, options)
 end
 
 def wc_files(options)
-  arrays_of_lines = files_to_arrays_of_lines
-  counts_maps = arrays_of_lines.map { |lines| build_counts_map(lines) }
+  files = ARGV.map { |path| File.readlines(path) }
+  counts_maps = files.map { |file| build_counts_map(file) }
   counts_maps.each_with_index do |counts_map, idx|
     puts format_counts_map_with_path(counts_map, idx, options).join
   end
   wc_total(counts_maps, options) if ARGV.size >= 2
-end
-
-def files_to_arrays_of_lines
-  ARGV.map { |path| File.readlines(path) }
 end
 
 def format_counts_map_with_path(counts_map, idx, options)
