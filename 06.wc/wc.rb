@@ -47,12 +47,12 @@ def count_bytesize(lines)
 end
 
 def format_file_data(file_data, options)
-  formatted_data = []
-  formatted_data << " #{file_data[:line_number].to_s.rjust(7)}" if options[:l]
-  formatted_data << " #{file_data[:word_number].to_s.rjust(7)}" if options[:w]
-  formatted_data << " #{file_data[:bytesize].to_s.rjust(7)}" if options[:c]
-  formatted_data << " #{file_data[:path]}" if file_data.has_key?(:path)
-  formatted_data
+  formatted_file_data = []
+  formatted_file_data << " #{file_data[:line_number].to_s.rjust(7)}" if options[:l]
+  formatted_file_data << " #{file_data[:word_number].to_s.rjust(7)}" if options[:w]
+  formatted_file_data << " #{file_data[:bytesize].to_s.rjust(7)}" if options[:c]
+  formatted_file_data << " #{file_data[:path]}" if file_data.has_key?(:path)
+  formatted_file_data
 end
 
 def wc_files(options, paths)
@@ -80,8 +80,8 @@ def get_files_data(files)
 end
 
 def wc_total(files_data, options)
-  total_counts_map = build_total_counts_map(files_data)
-  print_total_counts(total_counts_map, options)
+  total_file_data = build_total_counts_map(files_data)
+  puts format_file_data(total_file_data, options).push(' total').join
 end
 
 def build_total_counts_map(files_data)
@@ -90,15 +90,6 @@ def build_total_counts_map(files_data)
     word_number: files_data.map { |file_data| file_data[:word_number] }.sum,
     bytesize: files_data.map { |file_data| file_data[:bytesize] }.sum
   }
-end
-
-def print_total_counts(total_counts_map, options)
-  formatted_data = []
-  formatted_data << " #{total_counts_map[:line_number].to_s.rjust(7)}" if options[:l]
-  formatted_data << " #{total_counts_map[:word_number].to_s.rjust(7)}" if options[:w]
-  formatted_data << " #{total_counts_map[:bytesize].to_s.rjust(7)}" if options[:c]
-  formatted_data << " total\n"
-  print formatted_data.join
 end
 
 exec
