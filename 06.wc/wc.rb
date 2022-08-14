@@ -6,7 +6,8 @@ require 'optparse'
 def exec
   options = parse_options
   options = { c: true, l: true, w: true } if options.empty?
-  ARGV.empty? ? wc_stdin(options) : wc_files(options)
+  paths = ARGV
+  paths.empty? ? wc_stdin(options) : wc_files(options, paths)
 end
 
 def parse_options
@@ -20,71 +21,82 @@ def parse_options
 end
 
 def wc_stdin(options)
-  file = $stdin.readlines
-  counts_map = build_counts_map(file)
-  puts format_counts_map(counts_map, options).join
+  lines = $stdin.readlines
+  file_data = build_counts_map(lines)
+  puts format_file_data(file_data, options).join
 end
 
-def build_counts_map(file)
+def build_counts_map(lines)
   {
-    line: count_line_number(file),
-    word: count_word_number(file),
-    byte: count_bytesize(file)
+    line_number: count_line_number(lines),
+    word_number: count_word_number(lines),
+    bytesize: count_bytesize(lines)
   }
 end
 
-def count_line_number(file)
-  file.size
+def count_line_number(lines)
+  lines.size
 end
 
-def count_word_number(file)
-  file.map { |line| line.split(/[ \t\n]+/).size }.sum
+def count_word_number(lines)
+  lines.map { |line| line.split(/[ \t\n]+/).size }.sum
 end
 
-def count_bytesize(file)
-  file.map(&:bytesize).sum
+def count_bytesize(lines)
+  lines.map(&:bytesize).sum
 end
 
-def format_counts_map(counts_map, options)
+def format_file_data(file_data, options)
   formatted_data = []
-  formatted_data << " #{counts_map[:line].to_s.rjust(7)}" if options[:l]
-  formatted_data << " #{counts_map[:word].to_s.rjust(7)}" if options[:w]
-  formatted_data << " #{counts_map[:byte].to_s.rjust(7)}" if options[:c]
+  formatted_data << " #{file_data[:line_number].to_s.rjust(7)}" if options[:l]
+  formatted_data << " #{file_data[:word_number].to_s.rjust(7)}" if options[:w]
+  formatted_data << " #{file_data[:bytesize].to_s.rjust(7)}" if options[:c]
+  formatted_data << " #{file_data[:path]}" if file_data.has_key?(:path)
   formatted_data
 end
 
-def wc_files(options)
-  files = ARGV.map { |path| File.readlines(path) }
-  counts_maps = files.map { |file| build_counts_map(file) }
-  counts_maps.each_with_index do |counts_map, idx|
-    puts format_counts_map_with_path(counts_map, idx, options).join
+def wc_files(options, paths)
+  files = get_files(paths)
+  files_data = get_files_data(files)
+  files_data.map { |file_data| puts format_file_data(file_data, options).join}
+  wc_total(files_data, options) if paths.size >= 2
+end
+
+def get_files(paths)
+  paths.map do |path|
+    {
+      lines: File.readlines(path),
+      path: path
+    }
   end
-  wc_total(counts_maps, options) if ARGV.size >= 2
 end
 
-def format_counts_map_with_path(counts_map, idx, options)
-  path = ARGV[idx]
-  format_counts_map(counts_map, options) << " #{path}"
+def get_files_data(files)
+  files.map do |file|
+    file_data = build_counts_map(file[:lines])
+    file_data[:path] = file[:path]
+    file_data
+  end
 end
 
-def wc_total(counts_maps, options)
-  total_counts_map = build_total_counts_map(counts_maps)
+def wc_total(files_data, options)
+  total_counts_map = build_total_counts_map(files_data)
   print_total_counts(total_counts_map, options)
 end
 
-def build_total_counts_map(counts_maps)
+def build_total_counts_map(files_data)
   {
-    line: counts_maps.map { |counts_map| counts_map[:line] }.sum,
-    word: counts_maps.map { |counts_map| counts_map[:word] }.sum,
-    byte: counts_maps.map { |counts_map| counts_map[:byte] }.sum
+    line_number: files_data.map { |file_data| file_data[:line_number] }.sum,
+    word_number: files_data.map { |file_data| file_data[:word_number] }.sum,
+    bytesize: files_data.map { |file_data| file_data[:bytesize] }.sum
   }
 end
 
 def print_total_counts(total_counts_map, options)
   formatted_data = []
-  formatted_data << " #{total_counts_map[:line].to_s.rjust(7)}" if options[:l]
-  formatted_data << " #{total_counts_map[:word].to_s.rjust(7)}" if options[:w]
-  formatted_data << " #{total_counts_map[:byte].to_s.rjust(7)}" if options[:c]
+  formatted_data << " #{total_counts_map[:line_number].to_s.rjust(7)}" if options[:l]
+  formatted_data << " #{total_counts_map[:word_number].to_s.rjust(7)}" if options[:w]
+  formatted_data << " #{total_counts_map[:bytesize].to_s.rjust(7)}" if options[:c]
   formatted_data << " total\n"
   print formatted_data.join
 end
