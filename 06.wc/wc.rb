@@ -39,11 +39,11 @@ def count_line_number(lines)
 end
 
 def count_word_number(lines)
-  lines.map { |line| line.split(/[ \t\n]+/).size }.sum
+  lines.sum { |line| line.split(/[ \t\n]+/).size }
 end
 
 def count_bytesize(lines)
-  lines.map(&:bytesize).sum
+  lines.sum(&:bytesize)
 end
 
 def format_file_data(file_data, options)
@@ -86,9 +86,9 @@ end
 
 def build_total_counts_map(files_data)
   {
-    line_number: files_data.map { |file_data| file_data[:line_number] }.sum,
-    word_number: files_data.map { |file_data| file_data[:word_number] }.sum,
-    bytesize: files_data.map { |file_data| file_data[:bytesize] }.sum
+    line_number: files_data.sum { |file_data| file_data[:line_number] },
+    word_number: files_data.sum { |file_data| file_data[:word_number] },
+    bytesize: files_data.sum { |file_data| file_data[:bytesize] }
   }
 end
 
