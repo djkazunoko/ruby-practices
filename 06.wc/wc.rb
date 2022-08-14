@@ -51,14 +51,14 @@ def format_file_data(file_data, options)
   formatted_file_data << " #{file_data[:number_of_lines].to_s.rjust(7)}" if options[:l]
   formatted_file_data << " #{file_data[:number_of_words].to_s.rjust(7)}" if options[:w]
   formatted_file_data << " #{file_data[:bytesize].to_s.rjust(7)}" if options[:c]
-  formatted_file_data << " #{file_data[:path]}" if file_data.has_key?(:path)
+  formatted_file_data << " #{file_data[:path]}" if file_data.key?(:path)
   formatted_file_data
 end
 
 def count_files(options, paths)
   files = build_files(paths)
   files_data = build_files_data(files)
-  files_data.map { |file_data| puts format_file_data(file_data, options).join}
+  files_data.map { |file_data| puts format_file_data(file_data, options).join }
   count_total(files_data, options) if paths.size >= 2
 end
 
