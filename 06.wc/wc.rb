@@ -79,7 +79,8 @@ def build_total_counts_map(word_count_map_list)
   {
     number_of_lines: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_lines] },
     number_of_words: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_words] },
-    bytesize: word_count_map_list.sum { |word_count_map| word_count_map[:bytesize] }
+    bytesize: word_count_map_list.sum { |word_count_map| word_count_map[:bytesize] },
+    path: 'total'
   }
 end
 
