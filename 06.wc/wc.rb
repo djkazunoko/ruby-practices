@@ -26,11 +26,12 @@ def display_word_count_from_stdin(options)
   display_word_count(word_count_map, options)
 end
 
-def build_word_count_map(lines)
+def build_word_count_map(lines, path = '')
   {
     number_of_lines: count_line(lines),
     number_of_words: count_word(lines),
-    bytesize: count_bytesize(lines)
+    bytesize: count_bytesize(lines),
+    path: path
   }
 end
 
@@ -51,7 +52,7 @@ def display_word_count(word_count_map, options)
   word_counts << format_word_count(word_count_map[:number_of_lines]) if options[:l]
   word_counts << format_word_count(word_count_map[:number_of_words]) if options[:w]
   word_counts << format_word_count(word_count_map[:bytesize]) if options[:c]
-  word_counts << " #{word_count_map[:path]}" if word_count_map.key?(:path)
+  word_counts << " #{word_count_map[:path]}" unless word_count_map[:path].empty?
   puts word_counts.join
 end
 
@@ -68,9 +69,7 @@ end
 def build_word_count_maps(paths)
   paths.map do |path|
     lines = File.readlines(path)
-    word_count_map = build_word_count_map(lines)
-    word_count_map[:path] = path
-    word_count_map
+    build_word_count_map(lines, path)
   end
 end
 
