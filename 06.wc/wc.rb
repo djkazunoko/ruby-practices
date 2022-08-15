@@ -7,7 +7,7 @@ def exec
   options = parse_options
   options = { c: true, l: true, w: true } if options.empty?
   paths = ARGV
-  paths.empty? ? count_stdin(options) : count_files(options, paths)
+  paths.empty? ? display_word_count_from_stdin(options) : display_word_count_from_files(options, paths)
 end
 
 def parse_options
@@ -20,13 +20,13 @@ def parse_options
   options
 end
 
-def count_stdin(options)
+def display_word_count_from_stdin(options)
   lines = $stdin.readlines
-  file_data = build_counts_map(lines)
-  puts format_file_data(file_data, options).join
+  word_count_map = build_word_count_map(lines)
+  display_word_count(word_count_map, options)
 end
 
-def build_counts_map(lines)
+def build_word_count_map(lines)
   {
     number_of_lines: count_line(lines),
     number_of_words: count_word(lines),
@@ -46,19 +46,19 @@ def count_bytesize(lines)
   lines.sum(&:bytesize)
 end
 
-def format_file_data(file_data, options)
-  formatted_file_data = []
-  formatted_file_data << " #{file_data[:number_of_lines].to_s.rjust(7)}" if options[:l]
-  formatted_file_data << " #{file_data[:number_of_words].to_s.rjust(7)}" if options[:w]
-  formatted_file_data << " #{file_data[:bytesize].to_s.rjust(7)}" if options[:c]
-  formatted_file_data << " #{file_data[:path]}" if file_data.key?(:path)
-  formatted_file_data
+def display_word_count(word_count_map, options)
+  word_count_list = []
+  word_count_list << " #{word_count_map[:number_of_lines].to_s.rjust(7)}" if options[:l]
+  word_count_list << " #{word_count_map[:number_of_words].to_s.rjust(7)}" if options[:w]
+  word_count_list << " #{word_count_map[:bytesize].to_s.rjust(7)}" if options[:c]
+  word_count_list << " #{word_count_map[:path]}" if word_count_map.key?(:path)
+  puts word_count_list.join
 end
 
-def count_files(options, paths)
+def display_word_count_from_files(options, paths)
   files = build_files(paths)
   files_data = build_files_data(files)
-  files_data.map { |file_data| puts format_file_data(file_data, options).join }
+  files_data.map { |word_count_map| display_word_count(word_count_map, options) }
   count_total(files_data, options) if paths.size >= 2
 end
 
@@ -73,22 +73,22 @@ end
 
 def build_files_data(files)
   files.map do |file|
-    file_data = build_counts_map(file[:lines])
-    file_data[:path] = file[:path]
-    file_data
+    word_count_map = build_word_count_map(file[:lines])
+    word_count_map[:path] = file[:path]
+    word_count_map
   end
 end
 
 def count_total(files_data, options)
-  total_file_data = build_total_counts_map(files_data)
-  puts format_file_data(total_file_data, options).push(' total').join
+  total_word_count_map = build_total_counts_map(files_data)
+  display_word_count(total_word_count_map, options)
 end
 
 def build_total_counts_map(files_data)
   {
-    number_of_lines: files_data.sum { |file_data| file_data[:number_of_lines] },
-    number_of_words: files_data.sum { |file_data| file_data[:number_of_words] },
-    bytesize: files_data.sum { |file_data| file_data[:bytesize] }
+    number_of_lines: files_data.sum { |word_count_map| word_count_map[:number_of_lines] },
+    number_of_words: files_data.sum { |word_count_map| word_count_map[:number_of_words] },
+    bytesize: files_data.sum { |word_count_map| word_count_map[:bytesize] }
   }
 end
 
