@@ -58,7 +58,7 @@ end
 def display_word_count_from_files(options, paths)
   word_count_map_list = build_word_count_map_list(paths)
   word_count_map_list.map { |word_count_map| display_word_count(word_count_map, options) }
-  count_total(word_count_map_list, options) if paths.size >= 2
+  display_total_word_count(word_count_map_list, options) if paths.size >= 2
 end
 
 def build_word_count_map_list(paths)
@@ -70,12 +70,12 @@ def build_word_count_map_list(paths)
   end
 end
 
-def count_total(word_count_map_list, options)
-  total_word_count_map = build_total_counts_map(word_count_map_list)
+def display_total_word_count(word_count_map_list, options)
+  total_word_count_map = build_total_word_count_map(word_count_map_list)
   display_word_count(total_word_count_map, options)
 end
 
-def build_total_counts_map(word_count_map_list)
+def build_total_word_count_map(word_count_map_list)
   {
     number_of_lines: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_lines] },
     number_of_words: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_words] },
