@@ -48,11 +48,15 @@ end
 
 def display_word_count(word_count_map, options)
   word_count_list = []
-  word_count_list << " #{word_count_map[:number_of_lines].to_s.rjust(7)}" if options[:l]
-  word_count_list << " #{word_count_map[:number_of_words].to_s.rjust(7)}" if options[:w]
-  word_count_list << " #{word_count_map[:bytesize].to_s.rjust(7)}" if options[:c]
+  word_count_list << format_word_count(word_count_map[:number_of_lines]) if options[:l]
+  word_count_list << format_word_count(word_count_map[:number_of_words]) if options[:w]
+  word_count_list << format_word_count(word_count_map[:bytesize]) if options[:c]
   word_count_list << " #{word_count_map[:path]}" if word_count_map.key?(:path)
   puts word_count_list.join
+end
+
+def format_word_count(word_count)
+  word_count.to_s.rjust(8)
 end
 
 def display_word_count_from_files(options, paths)
