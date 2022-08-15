@@ -47,12 +47,12 @@ def count_bytesize(lines)
 end
 
 def display_word_count(word_count_map, options)
-  word_count_list = []
-  word_count_list << format_word_count(word_count_map[:number_of_lines]) if options[:l]
-  word_count_list << format_word_count(word_count_map[:number_of_words]) if options[:w]
-  word_count_list << format_word_count(word_count_map[:bytesize]) if options[:c]
-  word_count_list << " #{word_count_map[:path]}" if word_count_map.key?(:path)
-  puts word_count_list.join
+  word_counts = []
+  word_counts << format_word_count(word_count_map[:number_of_lines]) if options[:l]
+  word_counts << format_word_count(word_count_map[:number_of_words]) if options[:w]
+  word_counts << format_word_count(word_count_map[:bytesize]) if options[:c]
+  word_counts << " #{word_count_map[:path]}" if word_count_map.key?(:path)
+  puts word_counts.join
 end
 
 def format_word_count(word_count)
@@ -60,12 +60,12 @@ def format_word_count(word_count)
 end
 
 def display_word_count_from_files(options, paths)
-  word_count_map_list = build_word_count_map_list(paths)
-  word_count_map_list.map { |word_count_map| display_word_count(word_count_map, options) }
-  display_total_word_count(word_count_map_list, options) if paths.size >= 2
+  word_count_maps = build_word_count_maps(paths)
+  word_count_maps.map { |word_count_map| display_word_count(word_count_map, options) }
+  display_total_word_count(word_count_maps, options) if paths.size >= 2
 end
 
-def build_word_count_map_list(paths)
+def build_word_count_maps(paths)
   paths.map do |path|
     lines = File.readlines(path)
     word_count_map = build_word_count_map(lines)
@@ -74,16 +74,16 @@ def build_word_count_map_list(paths)
   end
 end
 
-def display_total_word_count(word_count_map_list, options)
-  total_word_count_map = build_total_word_count_map(word_count_map_list)
+def display_total_word_count(word_count_maps, options)
+  total_word_count_map = build_total_word_count_map(word_count_maps)
   display_word_count(total_word_count_map, options)
 end
 
-def build_total_word_count_map(word_count_map_list)
+def build_total_word_count_map(word_count_maps)
   {
-    number_of_lines: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_lines] },
-    number_of_words: word_count_map_list.sum { |word_count_map| word_count_map[:number_of_words] },
-    bytesize: word_count_map_list.sum { |word_count_map| word_count_map[:bytesize] },
+    number_of_lines: word_count_maps.sum { |word_count_map| word_count_map[:number_of_lines] },
+    number_of_words: word_count_maps.sum { |word_count_map| word_count_map[:number_of_words] },
+    bytesize: word_count_maps.sum { |word_count_map| word_count_map[:bytesize] },
     path: 'total'
   }
 end
