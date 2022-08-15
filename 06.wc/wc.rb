@@ -7,7 +7,7 @@ def exec
   options = parse_options
   options = { c: true, l: true, w: true } if options.empty?
   paths = ARGV
-  paths.empty? ? display_word_count_from_stdin(options) : display_word_count_from_files(options, paths)
+  paths.empty? ? display_word_count_from_stdin(options) : display_word_count_from_files(paths, options)
 end
 
 def parse_options
@@ -59,7 +59,7 @@ def format_word_count(word_count)
   word_count.to_s.rjust(8)
 end
 
-def display_word_count_from_files(options, paths)
+def display_word_count_from_files(paths, options)
   word_count_maps = build_word_count_maps(paths)
   word_count_maps.map { |word_count_map| display_word_count(word_count_map, options) }
   display_total_word_count(word_count_maps, options) if paths.size >= 2
