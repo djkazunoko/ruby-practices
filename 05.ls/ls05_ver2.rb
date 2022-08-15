@@ -79,25 +79,37 @@ end
 def add_special_permissions(mode_octal, permissions_symbolic)
   case mode_octal.slice(-4)
   when '1'
-    permissions_symbolic[2] = if permissions_symbolic[2].slice(2) == 'x'
-                                permissions_symbolic[2].gsub(/.$/, 't')
-                              else
-                                permissions_symbolic[2].gsub(/.$/, 'T')
-                              end
+    add_sticky_bit(permissions_symbolic)
   when '2'
-    permissions_symbolic[1] = if permissions_symbolic[1].slice(2) == 'x'
-                                permissions_symbolic[1].gsub(/.$/, 's')
-                              else
-                                permissions_symbolic[1].gsub(/.$/, 'S')
-                              end
+    add_sgid(permissions_symbolic)
   when '4'
-    permissions_symbolic[0] = if permissions_symbolic[0].slice(2) == 'x'
-                                permissions_symbolic[0].gsub(/.$/, 's')
-                              else
-                                permissions_symbolic[0].gsub(/.$/, 'S')
-                              end
+    add_suid(permissions_symbolic)
   end
   permissions_symbolic
+end
+
+def add_sticky_bit(permissions_symbolic)
+  permissions_symbolic[2] = if permissions_symbolic[2].slice(2) == 'x'
+                              permissions_symbolic[2].gsub(/.$/, 't')
+                            else
+                              permissions_symbolic[2].gsub(/.$/, 'T')
+                            end
+end
+
+def add_sgid(permissions_symbolic)
+  permissions_symbolic[1] = if permissions_symbolic[1].slice(2) == 'x'
+                              permissions_symbolic[1].gsub(/.$/, 's')
+                            else
+                              permissions_symbolic[1].gsub(/.$/, 'S')
+                            end
+end
+
+def add_suid(permissions_symbolic)
+  permissions_symbolic[0] = if permissions_symbolic[0].slice(2) == 'x'
+                              permissions_symbolic[0].gsub(/.$/, 's')
+                            else
+                              permissions_symbolic[0].gsub(/.$/, 'S')
+                            end
 end
 
 def get_bitesize(path_stat)
