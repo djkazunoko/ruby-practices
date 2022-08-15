@@ -80,22 +80,22 @@ def add_special_permissions(mode_octal, permissions_symbolic)
   case mode_octal.slice(-4)
   when '1'
     permissions_symbolic[2] = if permissions_symbolic[2].slice(2) == 'x'
-                                     permissions_symbolic[2].gsub(/.$/, 't')
-                                   else
-                                     permissions_symbolic[2].gsub(/.$/, 'T')
-                                   end
+                                permissions_symbolic[2].gsub(/.$/, 't')
+                              else
+                                permissions_symbolic[2].gsub(/.$/, 'T')
+                              end
   when '2'
     permissions_symbolic[1] = if permissions_symbolic[1].slice(2) == 'x'
-                                     permissions_symbolic[1].gsub(/.$/, 's')
-                                   else
-                                     permissions_symbolic[1].gsub(/.$/, 'S')
-                                   end
+                                permissions_symbolic[1].gsub(/.$/, 's')
+                              else
+                                permissions_symbolic[1].gsub(/.$/, 'S')
+                              end
   when '4'
     permissions_symbolic[0] = if permissions_symbolic[0].slice(2) == 'x'
-                                     permissions_symbolic[0].gsub(/.$/, 's')
-                                   else
-                                     permissions_symbolic[0].gsub(/.$/, 'S')
-                                   end
+                                permissions_symbolic[0].gsub(/.$/, 's')
+                              else
+                                permissions_symbolic[0].gsub(/.$/, 'S')
+                              end
   end
   permissions_symbolic
 end
