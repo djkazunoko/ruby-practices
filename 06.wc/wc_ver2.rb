@@ -21,30 +21,30 @@ def parse_options
 end
 
 def display_word_count_from_stdin(options)
-  lines = $stdin.readlines
-  word_count_map = build_word_count_map(lines)
+  text = $stdin.read
+  word_count_map = build_word_count_map(text)
   display_word_count(word_count_map, options)
 end
 
-def build_word_count_map(lines, path = '')
+def build_word_count_map(text, path = '')
   {
-    number_of_lines: count_line(lines),
-    number_of_words: count_word(lines),
-    bytesize: count_bytesize(lines),
+    number_of_lines: count_line(text),
+    number_of_words: count_word(text),
+    bytesize: count_bytesize(text),
     path: path
   }
 end
 
-def count_line(lines)
-  lines.size
+def count_line(text)
+  text.count("\n")
 end
 
-def count_word(lines)
-  lines.sum { |line| line.split(/\s+/).size }
+def count_word(text)
+  text.split(/\s+/).size
 end
 
-def count_bytesize(lines)
-  lines.sum(&:bytesize)
+def count_bytesize(text)
+  text.bytesize
 end
 
 def display_word_count(word_count_map, options)
@@ -68,8 +68,8 @@ end
 
 def build_word_count_maps(paths)
   paths.map do |path|
-    lines = File.readlines(path)
-    build_word_count_map(lines, path)
+    text = File.read(path)
+    build_word_count_map(text, path)
   end
 end
 
