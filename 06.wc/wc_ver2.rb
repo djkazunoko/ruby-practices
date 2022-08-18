@@ -40,7 +40,7 @@ def count_line(lines)
 end
 
 def count_word(lines)
-  lines.sum { |line| line.split(/[ \t\n]+/).size }
+  lines.sum { |line| line.split(/\s+/).size }
 end
 
 def count_bytesize(lines)
