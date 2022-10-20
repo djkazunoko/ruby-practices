@@ -14,4 +14,12 @@ class Frame
       @third_shot.score
     ].sum
   end
+
+  def strike?
+    @first_shot.mark == 'X'
+  end
+
+  def spare?
+    score == 10
+  end
 end

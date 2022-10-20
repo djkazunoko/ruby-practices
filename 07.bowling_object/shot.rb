@@ -1,4 +1,6 @@
 class Shot
+  attr_reader :mark
+
   def initialize(mark)
     @mark = mark
   end
