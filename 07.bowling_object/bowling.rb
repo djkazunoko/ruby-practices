@@ -5,19 +5,5 @@ require_relative 'game'
 
 shots = ARGV[0].split(',')
 
-frame = []
-frames = []
-shots.each do |s|
-  frame << s
-  if frames.length < 10
-    if frame.length >= 2 || s == 'X'
-      frames << frame.dup
-      frame.clear
-    end
-  else
-    frames.last << s
-  end
-end
-
-game = Game.new(frames)
+game = Game.new(shots)
 puts game.score

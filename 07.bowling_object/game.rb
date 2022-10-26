@@ -3,11 +3,12 @@
 require_relative 'frame'
 
 class Game
-  def initialize(frames)
-    @frames = frames
+  def initialize(shots)
+    @shots = shots
   end
 
   def score
+    @frames = build_frames
     @game_score = 0
     (0..9).each do |idx|
       @frame = Frame.new(@frames[idx])
@@ -17,6 +18,23 @@ class Game
       @game_score += calc_bonus_point(idx)
     end
     @game_score
+  end
+
+  def build_frames
+    frame = []
+    frames = []
+    @shots.each do |s|
+      frame << s
+      if frames.length < 10
+        if frame.length >= 2 || s == 'X'
+          frames << frame.dup
+          frame.clear
+        end
+      else
+        frames.last << s
+      end
+    end
+    frames
   end
 
   def calc_bonus_point(idx)
