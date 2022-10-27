@@ -9,15 +9,15 @@ class Game
 
   def score
     @frames = build_frames
-    @game_score = 0
+    game_score = 0
     (0..9).each do |idx|
       @frame = Frame.new(@frames[idx])
-      @game_score += @frame.score
+      game_score += @frame.score
       @frames[idx + 1] ||= []
       @frames[idx + 2] ||= []
-      @game_score += calc_bonus_point(idx)
+      game_score += calc_bonus_point(idx)
     end
-    @game_score
+    game_score
   end
 
   def build_frames
