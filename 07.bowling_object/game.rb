@@ -11,11 +11,11 @@ class Game
     @frames = build_frames
     game_score = 0
     (0..9).each do |idx|
-      @frame = Frame.new(@frames[idx])
-      game_score += @frame.score
+      frame = Frame.new(@frames[idx])
+      game_score += frame.score
       @frames[idx + 1] ||= []
       @frames[idx + 2] ||= []
-      game_score += calc_bonus_point(idx)
+      game_score += calc_bonus_point(idx, frame)
     end
     game_score
   end
@@ -37,11 +37,11 @@ class Game
     frames
   end
 
-  def calc_bonus_point(idx)
-    if @frame.strike?
+  def calc_bonus_point(idx, frame)
+    if frame.strike?
       next_two_shots = (@frames[idx + 1] + @frames[idx + 2]).slice(0, 2)
       bonus_point = next_two_shots.sum { |s| Shot.new(s).score }
-    elsif @frame.spare?
+    elsif frame.spare?
       next_shot = @frames[idx + 1][0]
       bonus_point = Shot.new(next_shot).score
     else
