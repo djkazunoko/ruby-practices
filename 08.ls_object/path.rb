@@ -15,10 +15,11 @@ MODE_MAP = {
 
 module LS
   class Path
-    attr_reader :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
+    attr_reader :name, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
 
     def initialize(path)
       path_stat = File.lstat(path)
+      @name = path
       @type = format_type(path_stat.ftype)
       @mode = format_mode(path_stat.mode)
       @nlink = path_stat.nlink.to_s

@@ -5,6 +5,7 @@ class PathTest < Minitest::Test
   def test_path_stat
     path = '../.gitkeep'
     path_stat = LS::Path.new(path)
+    assert_equal '../.gitkeep', path_stat.name
     assert_equal '-', path_stat.type
     assert_equal 'rw-r--r--', path_stat.mode
     assert_equal '1', path_stat.nlink

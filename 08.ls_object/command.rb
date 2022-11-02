@@ -8,18 +8,19 @@ module LS
   class Command
     def initialize(argv)
       @params = argv.getopts('alr')
+      @path_objects = get_paths
     end
 
     def list_paths
-      paths = get_paths(dotmatch: @params['a'])
-      paths = paths.reverse if @params['r']
-      @params['l'] ? LongFormatter.new(paths).list : ShortFormatter.new(paths).list
+      @params['l'] ? LongFormatter.new(@path_objects).list : ShortFormatter.new(@path_objects).list
     end
 
     private
 
-    def get_paths(dotmatch: false)
-      dotmatch ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+    def get_paths
+      paths = @params['a'] ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+      paths = paths.reverse if @params['r']
+      path_objects = paths.map { |path| Path.new(path) }
     end
   end
 end

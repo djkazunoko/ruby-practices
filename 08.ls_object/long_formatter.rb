@@ -4,41 +4,37 @@ require_relative 'path'
 
 module LS
   class LongFormatter
-    def initialize(paths)
-      @long_formats = paths.map { |path| get_long_format(path) }
-      @max_length_map = get_max_length_map(@long_formats)
-      @block_total = @long_formats.map { |long_format| long_format.blocks }.sum
+    def initialize(path_objects)
+      @path_objects = path_objects
+      @max_length_map = get_max_length_map(@path_objects)
+      @block_total = @path_objects.map { |path_object| path_object.blocks }.sum
     end
 
     def list
       puts "total #{@block_total}"
-      @long_formats.each { |long_format| print_long_format(long_format, @max_length_map) }
+      @path_objects.each { |path_object| print_long_format(path_object, @max_length_map) }
     end
 
     private
 
-    def get_long_format(path)
-      Path.new(path)
-    end
-
-    def get_max_length_map(long_formats)
+    def get_max_length_map(path_objects)
       {
-        nlink: long_formats.map { |long_format| long_format.nlink.size }.max,
-        username: long_formats.map { |long_format| long_format.username.size }.max,
-        groupname: long_formats.map { |long_format| long_format.groupname.size }.max,
-        bitesize: long_formats.map { |long_format| long_format.bitesize.size }.max
+        nlink: path_objects.map { |path_object| path_object.nlink.size }.max,
+        username: path_objects.map { |path_object| path_object.username.size }.max,
+        groupname: path_objects.map { |path_object| path_object.groupname.size }.max,
+        bitesize: path_objects.map { |path_object| path_object.bitesize.size }.max
       }
     end
 
-    def print_long_format(long_format, max_length_map)
+    def print_long_format(path_object, max_length_map)
       print [
-        "#{long_format.type}#{long_format.mode} ",
-        "#{long_format.nlink.rjust(max_length_map[:nlink])} ",
-        "#{long_format.username.ljust(max_length_map[:username])}  ",
-        "#{long_format.groupname.ljust(max_length_map[:groupname])}  ",
-        "#{long_format.bitesize.rjust(max_length_map[:bitesize])} ",
-        "#{long_format.mtime} ",
-        "#{long_format.pathname}\n"
+        "#{path_object.type}#{path_object.mode} ",
+        "#{path_object.nlink.rjust(max_length_map[:nlink])} ",
+        "#{path_object.username.ljust(max_length_map[:username])}  ",
+        "#{path_object.groupname.ljust(max_length_map[:groupname])}  ",
+        "#{path_object.bitesize.rjust(max_length_map[:bitesize])} ",
+        "#{path_object.mtime} ",
+        "#{path_object.pathname}\n"
       ].join
     end
   end
