@@ -2,19 +2,19 @@
 
 require 'etc'
 
-MODE_MAP = {
-  '0' => '---',
-  '1' => '--x',
-  '2' => '-w-',
-  '3' => '-wx',
-  '4' => 'r--',
-  '5' => 'r-x',
-  '6' => 'rw-',
-  '7' => 'rwx'
-}.freeze
-
 module LS
   class Path
+    MODE_MAP = {
+      '0' => '---',
+      '1' => '--x',
+      '2' => '-w-',
+      '3' => '-wx',
+      '4' => 'r--',
+      '5' => 'r-x',
+      '6' => 'rw-',
+      '7' => 'rwx'
+    }.freeze
+    
     attr_reader :name, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
 
     def initialize(path)

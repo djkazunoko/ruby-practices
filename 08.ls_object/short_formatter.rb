@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-COLUMN_NUMBER = 3
-
 module LS
   class ShortFormatter
+    COLUMN_NUMBER = 3
+
     def initialize(path_objects)
       @path_objects = path_objects
     end
