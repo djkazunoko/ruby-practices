@@ -19,7 +19,7 @@ module LS
 
     def initialize(path)
       path_stat = File.lstat(path)
-      @name = path
+      @name = File.basename(path)
       @type = format_type(path_stat.ftype)
       @mode = format_mode(path_stat.mode)
       @nlink = path_stat.nlink.to_s
@@ -106,9 +106,9 @@ module LS
 
     def get_pathname(path)
       if File.symlink?(path)
-        "#{path} -> #{File.readlink(path)}"
+        "#{File.basename(path)} -> #{File.readlink(path)}"
       else
-        path
+        File.basename(path)
       end
     end
   end
