@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'pathname'
+require_relative 'path'
 require_relative 'long_formatter'
 require_relative 'short_formatter'
 

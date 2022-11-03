@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'path'
-
 module LS
   class LongFormatter
     def initialize(path_objects)
