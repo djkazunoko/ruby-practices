@@ -4,18 +4,18 @@ module LS
   class ShortFormatter
     COLUMN_NUMBER = 3
 
-    def initialize(path_objects)
-      @path_objects = path_objects
+    def initialize(files)
+      @files = files
     end
 
-    def list
-      element_number = @path_objects.size.to_f
-      max_length = @path_objects.map { |path_object| path_object.name.size}.max
+    def list_files
+      element_number = @files.size.to_f
+      max_length = @files.map { |file| file.basename.size}.max
       row_number = (element_number / COLUMN_NUMBER).ceil
       lines = Array.new(row_number) { [] }
-      @path_objects.each_with_index do |path_object, index|
+      @files.each_with_index do |file, index|
         line_number = index % row_number
-        lines[line_number].push(path_object.name.ljust(max_length + 2))
+        lines[line_number].push(file.basename.ljust(max_length + 2))
       end
       lines.each { |line| puts line.join }
     end

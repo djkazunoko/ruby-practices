@@ -2,7 +2,7 @@
 
 require 'optparse'
 require 'pathname'
-require_relative 'path'
+require_relative 'file_stat'
 require_relative 'long_formatter'
 require_relative 'short_formatter'
 
@@ -13,18 +13,18 @@ module LS
       @target_dir = Pathname(argv[0] || '.')
     end
 
-    def list_paths
-      path_objects = get_paths
-      @params['l'] ? LongFormatter.new(path_objects).list : ShortFormatter.new(path_objects).list
+    def list_files
+      files = build_files
+      @params['l'] ? LongFormatter.new(files).list_files : ShortFormatter.new(files).list_files
     end
 
     private
 
-    def get_paths
+    def build_files
       pattern = @target_dir.join('*')
       paths = @params['a'] ? Dir.glob(pattern, File::FNM_DOTMATCH) : Dir.glob(pattern)
       paths = paths.reverse if @params['r']
-      path_objects = paths.map { |path| Path.new(path) }
+      files = paths.map { |path| FileStat.new(path) }
     end
   end
 end

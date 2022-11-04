@@ -3,4 +3,4 @@
 
 require_relative 'command'
 
-LS::Command.new(ARGV).list_paths
+LS::Command.new(ARGV).list_files

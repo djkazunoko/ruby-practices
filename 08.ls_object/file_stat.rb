@@ -3,7 +3,7 @@
 require 'etc'
 
 module LS
-  class Path
+  class FileStat
     MODE_MAP = {
       '0' => '---',
       '1' => '--x',
@@ -15,20 +15,20 @@ module LS
       '7' => 'rwx'
     }.freeze
     
-    attr_reader :name, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
+    attr_reader :basename, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
 
     def initialize(path)
-      path_stat = File.lstat(path)
-      @name = File.basename(path)
-      @type = format_type(path_stat.ftype)
-      @mode = format_mode(path_stat.mode)
-      @nlink = path_stat.nlink.to_s
-      @username = Etc.getpwuid(path_stat.uid).name
-      @groupname = Etc.getgrgid(path_stat.gid).name
-      @bitesize = get_bitesize(path_stat)
-      @mtime = get_mtime(path_stat)
+      file_stat = File.lstat(path)
+      @basename = File.basename(path)
+      @type = format_type(file_stat.ftype)
+      @mode = format_mode(file_stat.mode)
+      @nlink = file_stat.nlink.to_s
+      @username = Etc.getpwuid(file_stat.uid).name
+      @groupname = Etc.getgrgid(file_stat.gid).name
+      @bitesize = get_bitesize(file_stat)
+      @mtime = get_mtime(file_stat)
       @pathname = get_pathname(path)
-      @blocks = path_stat.blocks
+      @blocks = file_stat.blocks
     end
 
     private
@@ -88,19 +88,19 @@ module LS
                                 end
     end
 
-    def get_bitesize(path_stat)
-      if path_stat.rdev != 0
-        "0x#{path_stat.rdev.to_s(16)}"
+    def get_bitesize(file_stat)
+      if file_stat.rdev != 0
+        "0x#{file_stat.rdev.to_s(16)}"
       else
-        path_stat.size.to_s
+        file_stat.size.to_s
       end
     end
 
-    def get_mtime(path_stat)
-      if Time.now - path_stat.mtime >= (60 * 60 * 24 * (365 / 2.0)) || (Time.now - path_stat.mtime).negative?
-        path_stat.mtime.strftime('%_m %_d  %Y')
+    def get_mtime(file_stat)
+      if Time.now - file_stat.mtime >= (60 * 60 * 24 * (365 / 2.0)) || (Time.now - file_stat.mtime).negative?
+        file_stat.mtime.strftime('%_m %_d  %Y')
       else
-        path_stat.mtime.strftime('%_m %_d %H:%M')
+        file_stat.mtime.strftime('%_m %_d %H:%M')
       end
     end
 

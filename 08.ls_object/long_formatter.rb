@@ -2,37 +2,37 @@
 
 module LS
   class LongFormatter
-    def initialize(path_objects)
-      @path_objects = path_objects
-      @max_length_map = get_max_length_map(@path_objects)
-      @block_total = @path_objects.map { |path_object| path_object.blocks }.sum
+    def initialize(files)
+      @files = files
+      @max_length_map = get_max_length_map(@files)
+      @block_total = @files.map { |file| file.blocks }.sum
     end
 
-    def list
+    def list_files
       puts "total #{@block_total}"
-      @path_objects.each { |path_object| print_long_format(path_object, @max_length_map) }
+      @files.each { |file| print_long_format(file, @max_length_map) }
     end
 
     private
 
-    def get_max_length_map(path_objects)
+    def get_max_length_map(files)
       {
-        nlink: path_objects.map { |path_object| path_object.nlink.size }.max,
-        username: path_objects.map { |path_object| path_object.username.size }.max,
-        groupname: path_objects.map { |path_object| path_object.groupname.size }.max,
-        bitesize: path_objects.map { |path_object| path_object.bitesize.size }.max
+        nlink: files.map { |file| file.nlink.size }.max,
+        username: files.map { |file| file.username.size }.max,
+        groupname: files.map { |file| file.groupname.size }.max,
+        bitesize: files.map { |file| file.bitesize.size }.max
       }
     end
 
-    def print_long_format(path_object, max_length_map)
+    def print_long_format(file, max_length_map)
       print [
-        "#{path_object.type}#{path_object.mode} ",
-        "#{path_object.nlink.rjust(max_length_map[:nlink])} ",
-        "#{path_object.username.ljust(max_length_map[:username])}  ",
-        "#{path_object.groupname.ljust(max_length_map[:groupname])}  ",
-        "#{path_object.bitesize.rjust(max_length_map[:bitesize])} ",
-        "#{path_object.mtime} ",
-        "#{path_object.pathname}\n"
+        "#{file.type}#{file.mode} ",
+        "#{file.nlink.rjust(max_length_map[:nlink])} ",
+        "#{file.username.ljust(max_length_map[:username])}  ",
+        "#{file.groupname.ljust(max_length_map[:groupname])}  ",
+        "#{file.bitesize.rjust(max_length_map[:bitesize])} ",
+        "#{file.mtime} ",
+        "#{file.pathname}\n"
       ].join
     end
   end
