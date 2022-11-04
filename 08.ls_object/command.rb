@@ -24,7 +24,7 @@ module LS
       pattern = @target_dir.join('*')
       paths = @params['a'] ? Dir.glob(pattern, File::FNM_DOTMATCH) : Dir.glob(pattern)
       paths = paths.reverse if @params['r']
-      files = paths.map { |path| FileStat.new(path) }
+      paths.map { |path| FileStat.new(path) }
     end
   end
 end

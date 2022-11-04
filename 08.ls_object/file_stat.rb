@@ -14,7 +14,7 @@ module LS
       '6' => 'rw-',
       '7' => 'rwx'
     }.freeze
-    
+
     attr_reader :basename, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
 
     def initialize(path)

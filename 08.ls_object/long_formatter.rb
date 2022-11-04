@@ -5,7 +5,7 @@ module LS
     def initialize(files)
       @files = files
       @max_length_map = get_max_length_map(@files)
-      @block_total = @files.map { |file| file.blocks }.sum
+      @block_total = @files.map(&:blocks).sum
     end
 
     def list_files

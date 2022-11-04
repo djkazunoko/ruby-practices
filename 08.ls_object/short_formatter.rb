@@ -10,7 +10,7 @@ module LS
 
     def list_files
       element_number = @files.size.to_f
-      max_length = @files.map { |file| file.basename.size}.max
+      max_length = @files.map { |file| file.basename.size }.max
       row_number = (element_number / COLUMN_NUMBER).ceil
       lines = Array.new(row_number) { [] }
       @files.each_with_index do |file, index|
