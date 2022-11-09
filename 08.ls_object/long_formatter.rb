@@ -4,7 +4,7 @@ module LS
   class LongFormatter
     def initialize(files)
       @files = files
-      @max_length_map = get_max_length_map(@files)
+      @max_length_map = max_length_map(@files)
       @block_total = @files.map(&:blocks).sum
     end
 
@@ -15,7 +15,7 @@ module LS
 
     private
 
-    def get_max_length_map(files)
+    def max_length_map(files)
       {
         nlink: files.map { |file| file.nlink.size }.max,
         username: files.map { |file| file.username.size }.max,
