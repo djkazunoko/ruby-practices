@@ -4,6 +4,16 @@ require 'etc'
 
 module LS
   class FileStat
+    TYPE_MAP = {
+      'fifo' => 'p',
+      'characterSpecial' => 'c',
+      'directory' => 'd',
+      'blockSpecial' => 'b',
+      'file' => '-',
+      'link' => 'l',
+      'socket' => 's'
+    }.freeze
+
     MODE_MAP = {
       '0' => '---',
       '1' => '--x',
@@ -20,7 +30,7 @@ module LS
     def initialize(path)
       file_stat = File.lstat(path)
       @basename = File.basename(path)
-      @type = format_type(file_stat.ftype)
+      @type = TYPE_MAP[file_stat.ftype]
       @mode = format_mode(file_stat.mode)
       @nlink = file_stat.nlink.to_s
       @username = Etc.getpwuid(file_stat.uid).name
@@ -32,18 +42,6 @@ module LS
     end
 
     private
-
-    def format_type(type)
-      {
-        'fifo' => 'p',
-        'characterSpecial' => 'c',
-        'directory' => 'd',
-        'blockSpecial' => 'b',
-        'file' => '-',
-        'link' => 'l',
-        'socket' => 's'
-      }[type]
-    end
 
     def format_mode(mode)
       mode_octal = mode.to_s(8)
