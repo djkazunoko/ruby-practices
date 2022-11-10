@@ -15,7 +15,7 @@ module LS
       'socket' => 's'
     }.freeze
 
-    attr_reader :basename, :type, :mode, :nlink, :username, :groupname, :bitesize, :mtime, :pathname, :blocks
+    attr_reader :basename, :type, :mode, :nlink, :username, :groupname, :bytesize, :mtime, :pathname, :blocks
 
     def initialize(path)
       file_stat = File.lstat(path)
@@ -25,7 +25,7 @@ module LS
       @nlink = file_stat.nlink.to_s
       @username = Etc.getpwuid(file_stat.uid).name
       @groupname = Etc.getgrgid(file_stat.gid).name
-      @bitesize = get_bitesize(file_stat)
+      @bytesize = get_bytesize(file_stat)
       @mtime = get_mtime(file_stat)
       @pathname = get_pathname(path)
       @blocks = file_stat.blocks
@@ -33,7 +33,7 @@ module LS
 
     private
 
-    def get_bitesize(file_stat)
+    def get_bytesize(file_stat)
       if file_stat.rdev != 0
         "0x#{file_stat.rdev.to_s(16)}"
       else

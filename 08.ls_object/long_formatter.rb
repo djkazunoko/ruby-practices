@@ -20,7 +20,7 @@ module LS
         nlink: files.map { |file| file.nlink.size }.max,
         username: files.map { |file| file.username.size }.max,
         groupname: files.map { |file| file.groupname.size }.max,
-        bitesize: files.map { |file| file.bitesize.size }.max
+        bytesize: files.map { |file| file.bytesize.size }.max
       }
     end
 
@@ -30,7 +30,7 @@ module LS
         "#{file.nlink.rjust(max_length_map[:nlink])} ",
         "#{file.username.ljust(max_length_map[:username])}  ",
         "#{file.groupname.ljust(max_length_map[:groupname])}  ",
-        "#{file.bitesize.rjust(max_length_map[:bitesize])} ",
+        "#{file.bytesize.rjust(max_length_map[:bytesize])} ",
         "#{file.mtime} ",
         "#{file.pathname}\n"
       ].join
