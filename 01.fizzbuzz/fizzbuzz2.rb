@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 20.times do |i|
   if (i+1) % 15 == 0
     puts 'FizzBuzz'
