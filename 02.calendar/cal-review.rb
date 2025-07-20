@@ -17,6 +17,7 @@ first_wday = Date.new(year, month, 1).wday
 
 (1..last_day).each do |n|
   print n.to_s.rjust(2)
+  print ' '
   if (n + first_wday) % 7 == 0
     puts "\n"
   end
