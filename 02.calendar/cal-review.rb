@@ -11,7 +11,7 @@ year = params["y"].to_i
 last_day = Date.new(year, month, -1).day
 first_wday = Date.new(year, month, 1).wday
 
-puts "#{month}月 #{year}"
+puts "      #{month}月 #{year}"
 puts '日 月 火 水 木 金 土'
 print '   ' * first_wday
 
