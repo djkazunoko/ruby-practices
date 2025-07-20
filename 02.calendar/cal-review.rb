@@ -16,7 +16,11 @@ puts '日 月 火 水 木 金 土'
 print '   ' * first_wday
 
 (1..last_day).each do |n|
-  print n.to_s.rjust(2)
+  if Date.new(year, month, n) == today
+    print "\e[47m\e[30m#{n}\e[0m".to_s.rjust(2)
+  else
+    print n.to_s.rjust(2)
+  end
   print ' '
   if (n + first_wday) % 7 == 0
     puts "\n"
